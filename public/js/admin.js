@@ -128,6 +128,19 @@ async function refreshState() {
   }
 }
 
+async function reloadState() {
+  try {
+    state = await api('/api/admin/state');
+    renderAll();
+  } catch (err) {
+    if (err.status === 401) {
+      showLogin();
+    } else {
+      toast(err.message, 'error');
+    }
+  }
+}
+
 function renderAll() {
   renderLastUpdated();
   renderDeadlinePreview();
@@ -589,7 +602,7 @@ async function saveConfig() {
   try {
     await api('/api/admin/config', { method: 'POST', body: JSON.stringify(payload) });
     toast('設定已儲存');
-    await refreshState();
+    await reloadState();
     renderConfigForm();
   } catch (err) {
     toast(err.message, 'error');
@@ -719,7 +732,7 @@ async function doImport() {
     const resultBox = el('p', { class: 'import-result' }, message);
     $('#csvPreview').append(resultBox);
     toast('名冊匯入成功');
-    await refreshState();
+    await reloadState();
   } catch (err) {
     toast(err.message, 'error');
   } finally {
@@ -736,7 +749,7 @@ async function resetData(mode) {
   try {
     await api('/api/admin/reset', { method: 'POST', body: JSON.stringify({ mode }) });
     toast(`${label}完成`);
-    await refreshState();
+    await reloadState();
     renderConfigForm();
   } catch (err) {
     toast(err.message, 'error');

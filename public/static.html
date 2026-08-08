@@ -2065,12 +2065,12 @@ button {
                 </label>
                 <label class="field">
                   <span>活動標題</span>
-                  <input id="eventTitle" maxlength="120" placeholder="例如：2026 會員盛夏交流會">
+                  <input id="cfgEventTitle" maxlength="120" placeholder="例如：2026 會員盛夏交流會">
                 </label>
               </div>
               <label class="field">
                 <span>活動說明</span>
-                <textarea id="description" rows="3" maxlength="1000" placeholder="報名頁顯示的活動說明"></textarea>
+                <textarea id="cfgDescription" rows="3" maxlength="1000" placeholder="報名頁顯示的活動說明"></textarea>
               </label>
               <div class="config-grid event-time-grid">
                 <label class="field">
@@ -5113,8 +5113,8 @@ function renderAll() {
 function renderConfigForm() {
   const config = state.config;
   $('#siteTitle').value = config.siteTitle || '';
-  $('#eventTitle').value = config.eventTitle || '';
-  $('#description').value = config.description || '';
+  $('#cfgEventTitle').value = config.eventTitle || '';
+  $('#cfgDescription').value = config.description || '';
   $('#startDate').value = toDateOnly(config.startAt);
   $('#startTime').value = toTimeOnly(config.startAt) || '17:30';
   $('#endDate').value = toDateOnly(config.deadline);
@@ -5158,8 +5158,8 @@ function saveConfig() {
   if (qrUrl && !/^https?:\/\//i.test(qrUrl)) return toast('QR 網址格式不正確，需以 http:// 或 https:// 開頭', 'error');
   state.config = {
     siteTitle: $('#siteTitle').value.trim(),
-    eventTitle: $('#eventTitle').value.trim(),
-    description: $('#description').value.trim(),
+    eventTitle: $('#cfgEventTitle').value.trim(),
+    description: $('#cfgDescription').value.trim(),
     startAt,
     deadline,
     qrUrl,

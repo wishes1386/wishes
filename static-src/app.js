@@ -591,8 +591,8 @@ function renderAll() {
 function renderConfigForm() {
   const config = state.config;
   $('#siteTitle').value = config.siteTitle || '';
-  $('#eventTitle').value = config.eventTitle || '';
-  $('#description').value = config.description || '';
+  $('#cfgEventTitle').value = config.eventTitle || '';
+  $('#cfgDescription').value = config.description || '';
   $('#startDate').value = toDateOnly(config.startAt);
   $('#startTime').value = toTimeOnly(config.startAt) || '17:30';
   $('#endDate').value = toDateOnly(config.deadline);
@@ -636,8 +636,8 @@ function saveConfig() {
   if (qrUrl && !/^https?:\/\//i.test(qrUrl)) return toast('QR 網址格式不正確，需以 http:// 或 https:// 開頭', 'error');
   state.config = {
     siteTitle: $('#siteTitle').value.trim(),
-    eventTitle: $('#eventTitle').value.trim(),
-    description: $('#description').value.trim(),
+    eventTitle: $('#cfgEventTitle').value.trim(),
+    description: $('#cfgDescription').value.trim(),
     startAt,
     deadline,
     qrUrl,
