@@ -1,0 +1,5424 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>報名統計系統</title>
+  <style>
+:root {
+  --coral: #003d79;
+  --coral-dark: #002a55;
+  --teal: #f26522;
+  --teal-dark: #d04f0e;
+  --amber: #ffb400;
+  --violet: #4b7cb8;
+  --ink: #1f2d3d;
+  --muted: #64748b;
+  --paper: #f5f7fa;
+  --card: #ffffff;
+  --line: #dce3ec;
+  --shadow: 0 14px 34px rgba(38, 49, 61, 0.1);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px 56px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--coral), var(--amber));
+  color: #fff;
+}
+
+.brand-mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.brand-logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brand-logo-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 10px rgba(0, 61, 121, 0.14);
+  overflow: hidden;
+  animation: logo-float 4.5s ease-in-out infinite;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.brand-logo-chip img {
+  display: block;
+  height: 42px;
+  width: auto;
+}
+
+.brand-logo-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.brand-logos:hover .brand-logo-chip {
+  animation-play-state: paused;
+  transform: translateY(-3px) rotate(-1deg) scale(1.04);
+  box-shadow: 0 10px 22px rgba(0, 61, 121, 0.24);
+}
+
+.brand-logos:hover .brand-logo-chip::after {
+  transform: translateX(120%);
+}
+
+.brand-logo-chip:active {
+  transform: scale(0.97);
+}
+
+@keyframes logo-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  padding: 10px 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--card);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.btn-primary {
+  background: var(--coral);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 61, 121, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--coral-dark);
+}
+
+.btn-ghost {
+  border-color: var(--line);
+  background: var(--card);
+}
+
+.btn-ghost:hover {
+  border-color: var(--coral);
+  color: var(--coral-dark);
+}
+
+.btn-icon {
+  padding: 9px;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+.event-hero {
+  margin: 24px 0;
+  padding: 30px 28px;
+  border-radius: var(--radius);
+  color: #fff;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0 12px, transparent 12px 24px),
+    linear-gradient(120deg, #003d79 0%, #1f6fb2 52%, #f26522 120%);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.event-hero h1 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.25;
+  letter-spacing: 0;
+  word-break: break-word;
+}
+
+.event-desc {
+  margin: 10px 0 16px;
+  font-size: 16px;
+  max-width: 620px;
+  word-break: break-word;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chip svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.chip-status {
+  position: relative;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip-status:not(.status-live) .status-dot {
+  display: none;
+}
+
+.chip-status.status-live {
+  background: linear-gradient(100deg, #f26522, #ffb400);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 22px rgba(242, 101, 34, 0.48);
+  overflow: hidden;
+  animation: status-float 1.8s ease-in-out infinite;
+}
+
+.chip-status.status-live .status-dot {
+  background: #fff;
+  animation: dot-ping 1.4s ease-out infinite;
+}
+
+.chip-status.status-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: status-shine 2.6s ease-in-out infinite;
+}
+
+@keyframes status-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+@keyframes dot-ping {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 9px rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes status-shine {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  85%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.form-panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px 28px 30px;
+  box-shadow: var(--shadow);
+}
+
+.hero-qr {
+  width: 270px;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(0, 61, 121, 0.22);
+  text-align: center;
+  color: var(--ink);
+}
+
+.hero-qr .qr-head svg {
+  color: var(--coral);
+}
+
+.hero-qr .qr-hint {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.hero-qr .qr-url-label {
+  color: var(--teal-dark);
+  opacity: 1;
+}
+
+.hero-qr .qr-url {
+  color: var(--muted);
+}
+
+.qr-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 6px;
+}
+
+.qr-head svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.qr-head h2 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: 0;
+}
+
+.qr-hint {
+  margin: 0 0 14px;
+  font-size: 13px;
+  opacity: 0.94;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 14px;
+  min-height: 190px;
+}
+
+.qr-code img,
+.qr-code canvas {
+  width: 100%;
+  height: auto;
+  max-width: 214px;
+  display: block;
+}
+
+.qr-code .qr-loading {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.qr-url-label {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.85;
+}
+
+.qr-url {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: break-all;
+  opacity: 0.95;
+}
+
+.panel-head {
+  margin-bottom: 20px;
+}
+
+.panel-head h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+.panel-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 11px 12px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 61, 121, 0.16);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.option-card {
+  --opt-color: var(--teal);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, transform 0.12s ease;
+  min-width: 0;
+}
+
+.option-card:hover {
+  border-color: var(--opt-color);
+  transform: translateY(-1px);
+}
+
+.option-card input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin: 2px 0 0;
+  accent-color: var(--opt-color);
+}
+
+.option-card.checked {
+  border-color: var(--opt-color);
+  background: color-mix(in srgb, var(--opt-color) 9%, #fff);
+  box-shadow: 0 0 0 1px var(--opt-color) inset;
+}
+
+.option-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.option-title {
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.option-desc {
+  font-size: 13px;
+  color: var(--muted);
+  word-break: break-word;
+}
+
+.field-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -6px 0 18px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  background: #fff4e5;
+  border: 1px solid #ffd9a8;
+  color: #9a5b00;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field-note svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.confirm-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  background: #f7f9fc;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 14px;
+}
+
+.confirm-row span {
+  color: var(--muted);
+}
+
+.confirm-row strong {
+  text-align: right;
+  word-break: break-all;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-error {
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  background: #fdeceb;
+  color: #b32e28;
+  border: 1px solid #f3c4c0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.result {
+  margin-top: 22px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: #eef9f6;
+  border: 1px solid #bfe5dc;
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-weight: 800;
+  color: var(--teal-dark);
+}
+
+.result-head svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.result p {
+  margin: 4px 0;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.result-tag {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--teal);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 26px;
+  max-width: 980px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(38, 49, 61, 0.45);
+}
+
+.modal-card {
+  width: min(400px, 100%);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(38, 49, 61, 0.3);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.modal-head h3 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.modal-hint {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.modal-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .event-hero {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+  }
+
+  .hero-qr {
+    width: 100%;
+  }
+
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel {
+    padding: 22px 18px;
+  }
+
+  .brand {
+    flex-wrap: wrap;
+  }
+
+  .brand-logos {
+    width: 100%;
+  }
+
+  .brand-logo-chip img {
+    height: 28px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-qr {
+    width: 100%;
+  }
+}
+
+:root {
+  --coral: #003d79;
+  --coral-dark: #002a55;
+  --teal: #f26522;
+  --teal-dark: #d04f0e;
+  --amber: #ffb400;
+  --violet: #4b7cb8;
+  --blue: #1f6fb2;
+  --ink: #1f2d3d;
+  --muted: #64748b;
+  --paper: #f1f4f8;
+  --card: #ffffff;
+  --line: #dce3ec;
+  --shadow: 0 12px 28px rgba(38, 49, 61, 0.08);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.admin-body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100vh;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  padding: 9px 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--card);
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+}
+
+.btn-primary {
+  background: var(--coral);
+  color: #fff;
+  box-shadow: 0 7px 18px rgba(0, 61, 121, 0.28);
+}
+
+.btn-primary:hover {
+  background: var(--coral-dark);
+}
+
+.btn-teal {
+  background: var(--teal);
+  color: #fff;
+  box-shadow: 0 7px 18px rgba(242, 101, 34, 0.24);
+}
+
+.btn-teal:hover {
+  background: var(--teal-dark);
+}
+
+.btn-ghost {
+  border-color: var(--line);
+  background: var(--card);
+}
+
+.btn-ghost:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+}
+
+.btn-danger {
+  background: #fff;
+  border-color: #e8b4af;
+  color: #b32e28;
+}
+
+.btn-danger:hover {
+  background: #fdeceb;
+  border-color: #d96b62;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0 14px, transparent 14px 28px),
+    linear-gradient(120deg, #003d79, #f26522);
+}
+
+.admin-login-card {
+  width: min(420px, 100%);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: 0 26px 70px rgba(38, 49, 61, 0.28);
+}
+
+.admin-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius);
+  background: var(--coral);
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.admin-logo svg {
+  width: 26px;
+  height: 26px;
+}
+
+.admin-login-card h1 {
+  margin: 0 0 4px;
+  font-size: 26px;
+  letter-spacing: 0;
+}
+
+.admin-login-card > p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.admin-login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea,
+.field select,
+.search-input,
+.select-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.search-input:focus,
+.select-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 61, 121, 0.15);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 86px;
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: #fdeceb;
+  color: #b32e28;
+  border: 1px solid #f3c4c0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--coral), var(--teal));
+  color: #fff;
+}
+
+.brand-mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.brand-name {
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 61px);
+}
+
+.admin-nav {
+  border-right: 1px solid var(--line);
+  padding: 18px 12px;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: sticky;
+  top: 61px;
+  height: calc(100vh - 61px);
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+  text-align: left;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.nav-item svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.nav-item:hover {
+  background: #f4efe9;
+}
+
+.nav-item.active {
+  background: #eaf1fa;
+  border-color: #c9d8ec;
+  color: var(--coral-dark);
+}
+
+.admin-main {
+  padding: 26px 28px 60px;
+  min-width: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-head h2 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  letter-spacing: 0;
+}
+
+.section-head p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.deadline-preview {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.preview-head strong {
+  font-size: 17px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-head strong svg {
+  width: 20px;
+  height: 20px;
+  color: var(--teal);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.stat {
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  background: #faf6f1;
+  border: 1px solid var(--line);
+  min-width: 0;
+}
+
+.stat span {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.stat strong {
+  display: block;
+  font-size: 27px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  word-break: break-word;
+}
+
+.stat.stat-coral strong {
+  color: var(--coral);
+}
+
+.stat.stat-teal strong {
+  color: var(--teal-dark);
+}
+
+.stat.stat-amber strong {
+  color: #c07f00;
+}
+
+.stat.stat-violet strong {
+  color: var(--violet);
+}
+
+.preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.preview-meta strong {
+  color: var(--ink);
+}
+
+.option-bar-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+
+.mini-option-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mini-option-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-option-label small {
+  color: var(--muted);
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.panel-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel-head-row h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.panel-head-row p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.data-table th,
+.data-table td {
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.data-table th {
+  background: #faf6f1;
+  font-weight: 800;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table tbody tr:hover {
+  background: #fbf8f4;
+}
+
+.bar {
+  height: 9px;
+  border-radius: 999px;
+  background: #ece4dc;
+  overflow: hidden;
+  min-width: 90px;
+  margin-top: 7px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  min-width: 2px;
+}
+
+.member-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #eef4f2;
+  color: var(--ink);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.member-chip span {
+  color: var(--muted);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.event-time-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.event-time-hint {
+  margin: -6px 0 16px;
+  font-size: 13px;
+}
+
+.config-grid .field {
+  margin-bottom: 0;
+}
+
+.panel .field {
+  margin-bottom: 16px;
+}
+
+.toggle-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  min-height: 44px;
+}
+
+.toggle-field span {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-field strong {
+  font-size: 14px;
+}
+
+.toggle-field small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.toggle-field input {
+  width: 46px;
+  height: 26px;
+  flex: 0 0 46px;
+  accent-color: var(--teal);
+}
+
+.option-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-row {
+  display: grid;
+  grid-template-columns: 42px minmax(160px, 1.1fr) minmax(180px, 1.4fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: #fff;
+}
+
+.option-row input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 10px;
+  outline: none;
+}
+
+.option-row input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 61, 121, 0.15);
+}
+
+.option-row input[type="color"] {
+  width: 42px;
+  height: 42px;
+  padding: 3px;
+  border-radius: var(--radius);
+}
+
+.option-row .btn {
+  padding: 9px;
+}
+
+.roster-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.roster-summary .stat {
+  padding: 9px 13px;
+  min-width: 100px;
+}
+
+.roster-summary .stat strong {
+  font-size: 21px;
+}
+
+#csvFile {
+  width: 100%;
+  padding: 14px;
+  border: 1px dashed #c9beb2;
+  border-radius: var(--radius);
+  background: #faf6f1;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.mapping-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.preview-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.import-result {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: #eef9f6;
+  border: 1px solid #bfe5dc;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-dark);
+}
+
+.data-check-ok {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: #eef9f6;
+  border: 1px solid #bfe5dc;
+  color: var(--teal-dark);
+  font-weight: 800;
+}
+
+.data-check-ok svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.data-check-ok span {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.qr-status-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.qr-status-img {
+  width: 150px;
+  height: 150px;
+  flex: 0 0 150px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+}
+
+.qr-status-info {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qr-status-url {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.qr-status-url span {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--teal-dark);
+}
+
+.qr-status-url strong {
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.qr-status-badge {
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.qr-status-pending {
+  background: #fff3d6;
+  color: #9a5b00;
+}
+
+.qr-status-ok {
+  background: #e2f4ee;
+  color: var(--teal-dark);
+}
+
+.qr-status-warn {
+  background: #fff3d6;
+  color: #9a5b00;
+}
+
+.qr-status-bad {
+  background: #fdeceb;
+  color: #b32e28;
+}
+
+.issue-card {
+  border: 1px solid #f3c4c0;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.issue-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.issue-head strong {
+  color: #b32e28;
+}
+
+.issue-count {
+  background: #fdeceb;
+  color: #b32e28;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.issue-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.issue-item {
+  background: #fdf3f2;
+  border: 1px solid #f3c4c0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.danger-panel {
+  border-color: #e8b4af;
+}
+
+.people-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr minmax(150px, 220px);
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #faf6f1;
+}
+
+.seg {
+  padding: 9px 16px;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.seg.active {
+  background: var(--teal);
+  color: #fff;
+}
+
+.search-input,
+.select-input {
+  min-width: 0;
+}
+
+.table-note {
+  margin: 12px 0 0;
+  font-size: 13px;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  max-width: min(380px, calc(100vw - 40px));
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 16px 40px rgba(38, 49, 61, 0.3);
+  animation: toast-in 0.18s ease;
+}
+
+.toast.error {
+  background: var(--coral-dark);
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 10px;
+    top: 61px;
+  }
+
+  .nav-item {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .admin-main {
+    padding: 20px 14px 48px;
+  }
+
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-time-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .option-row {
+    grid-template-columns: 42px 1fr auto;
+  }
+
+  .option-row input:nth-child(3) {
+    grid-column: 2 / 4;
+  }
+
+  .mini-option-row {
+    grid-template-columns: 110px 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-head,
+  .panel-head-row {
+    flex-direction: column;
+  }
+
+  .topbar-actions .btn span {
+    display: none;
+  }
+
+  .people-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .segmented {
+    width: 100%;
+  }
+
+  .seg {
+    flex: 1;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .event-time-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#adminPage {
+  display: none;
+}
+#adminPage.visible {
+  display: block;
+}
+.static-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--radius);
+  background: #eaf1fa;
+  border: 1px solid #c9d8ec;
+  color: var(--coral-dark);
+  font-size: 13px;
+  font-weight: 700;
+}
+.static-banner svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+  </style>
+</head>
+<body>
+  <div id="publicPage">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-logos">
+          <span class="brand-logo-chip"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Crect width='100' height='30' rx='6' fill='%23fff'/%3E%3Ctext x='10' y='20' font-family='Arial' font-size='13' font-weight='bold' fill='%23003d79'%3ECHT%3C/text%3E%3Ctext x='36' y='20' font-family='Arial' font-size='13' font-weight='bold' fill='%23f26522'%3E工會%3C/text%3E%3C/svg%3E" alt="中華電信與中華電信工會"></span>
+        </span>
+      </div>
+      <button id="adminBtn" class="btn btn-ghost" type="button">
+        <i data-lucide="lock-keyhole"></i>
+        <span>後台登入</span>
+      </button>
+    </header>
+
+    <main class="wrap">
+      <section class="event-hero">
+        <div class="hero-text">
+          <p class="eyebrow">會員活動報名表</p>
+          <h1 id="eventTitle">活動標題</h1>
+          <p id="eventDesc" class="event-desc"></p>
+          <div class="meta-row">
+            <span class="chip chip-start">
+              <i data-lucide="calendar-plus"></i>
+              <span id="startText"></span>
+            </span>
+            <span class="chip chip-deadline">
+              <i data-lucide="calendar-x"></i>
+              <span id="deadlineText"></span>
+            </span>
+            <span class="chip chip-status" id="statusChip">
+              <span class="status-dot"></span>
+              <span id="statusText"></span>
+            </span>
+          </div>
+        </div>
+        <div class="hero-qr">
+          <div class="qr-head">
+            <i data-lucide="qrcode"></i>
+            <h2>掃碼報名</h2>
+          </div>
+          <p class="qr-hint">手機掃描 QR Code，直接開啟此活動報名頁</p>
+          <div id="qrCode" class="qr-code"></div>
+          <p class="qr-url-label">目前報名網址</p>
+          <p id="qrUrlText" class="qr-url"></p>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <div class="panel-head">
+          <h2>選擇參加選項</h2>
+          <p>單選；送出後用相同姓名再送出一次即可修改選擇。</p>
+        </div>
+
+        <form id="regForm" novalidate>
+          <div class="identity-grid">
+            <label class="field">
+              <span>姓名</span>
+              <input id="memberName" name="name" autocomplete="name" placeholder="與名冊一致的姓名" required>
+            </label>
+            <label class="field">
+              <span>手機（選填）</span>
+              <input id="memberPhone" name="phone" type="tel" placeholder="同名時請填寫，例 0912-345-678">
+            </label>
+            <label class="field">
+              <span>身分證（選填）</span>
+              <input id="memberId" name="idCard" maxlength="10" placeholder="例 A123456789">
+            </label>
+            <label class="field">
+              <span>出生年月日（選填）</span>
+              <input id="memberBirth" name="birthDate" type="date">
+            </label>
+          </div>
+          <p class="field-note"><i data-lucide="info"></i><span>活動如有保險時需填寫正確</span></p>
+
+          <div id="manualFields" class="identity-grid hidden">
+            <label class="field">
+              <span>Email（選填）</span>
+              <input id="memberEmail" name="email" type="email" placeholder="name@example.com">
+            </label>
+          </div>
+
+          <div id="options" class="option-grid"></div>
+          <div id="formError" class="form-error hidden"></div>
+
+          <button id="submitBtn" class="btn btn-primary btn-wide" type="submit">
+            <i data-lucide="send"></i>
+            <span>確認送出報名</span>
+          </button>
+        </form>
+
+        <div id="result" class="result hidden"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="footerTitle">報名統計系統</span>
+      <span>報名資料以送出時間為準</span>
+    </footer>
+  </div>
+
+  <div id="adminPage" class="admin-body">
+    <section id="loginScreen" class="admin-login-screen">
+      <div class="admin-login-card">
+        <span class="admin-logo"><i data-lucide="shield-check"></i></span>
+        <h1>報名後台</h1>
+        <p>請輸入後台密碼以檢視即時報表</p>
+        <form id="adminLoginForm">
+          <label class="field">
+            <span>帳號</span>
+            <input value="admin" disabled>
+          </label>
+          <label class="field">
+            <span>密碼</span>
+            <input id="adminPassword" type="password" autocomplete="current-password" placeholder="請輸入密碼" required>
+          </label>
+          <p id="adminLoginError" class="form-error hidden"></p>
+          <button class="btn btn-primary btn-wide" type="submit">
+            <i data-lucide="log-in"></i>
+            <span>登入</span>
+          </button>
+        </form>
+        <button id="backHome" class="btn btn-ghost btn-wide" type="button">返回報名表單</button>
+      </div>
+    </section>
+
+    <div id="app" class="admin-app hidden">
+      <header class="admin-topbar">
+        <div class="brand">
+          <span class="brand-mark"><i data-lucide="gauge"></i></span>
+          <span class="brand-name">報名後台</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="btn btn-ghost" type="button">
+            <i data-lucide="refresh-cw"></i>
+            <span>立即更新</span>
+          </button>
+          <button id="logoutBtn" class="btn btn-ghost" type="button">
+            <i data-lucide="log-out"></i>
+            <span>登出</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="admin-layout">
+        <nav class="admin-nav">
+          <button class="nav-item active" data-section="overview" type="button">
+            <i data-lucide="layout-dashboard"></i>
+            <span>即時報表</span>
+          </button>
+          <button class="nav-item" data-section="config" type="button">
+            <i data-lucide="settings-2"></i>
+            <span>活動設定</span>
+          </button>
+          <button class="nav-item" data-section="roster" type="button">
+            <i data-lucide="file-up"></i>
+            <span>名冊匯入</span>
+          </button>
+          <button class="nav-item" data-section="people" type="button">
+            <i data-lucide="users"></i>
+            <span>人員清冊</span>
+          </button>
+          <button class="nav-item" data-section="datacheck" type="button">
+            <i data-lucide="search"></i>
+            <span>資料檢查</span>
+          </button>
+        </nav>
+
+        <main class="admin-main">
+          <section id="overview" class="section">
+            <div class="section-head">
+              <div>
+                <h2>即時報表</h2>
+                <p id="lastUpdated" class="muted">資料載入中…</p>
+              </div>
+            </div>
+            <div class="panel qr-status-panel">
+              <div class="panel-head-row">
+                <div>
+                  <h3>QR Code 即時狀態</h3>
+                  <p id="qrStatusHint" class="muted">自動偵測目前資料擺放位置，並即時產生可用 QR Code</p>
+                </div>
+                <button id="qrCheckBtn" class="btn btn-teal" type="button">
+                  <i data-lucide="qrcode"></i>
+                  <span>檢查並更新 QR</span>
+                </button>
+              </div>
+              <div id="qrStatusBox" class="qr-status-box"></div>
+            </div>
+            <div id="deadlinePreview" class="deadline-preview"></div>
+            <div class="panel">
+              <div class="panel-head-row">
+                <div>
+                  <h3>活動選項報表</h3>
+                  <p class="muted">每個選項的報名人數與人員清單</p>
+                </div>
+                <button id="exportOptionsBtn" class="btn btn-teal" type="button">
+                  <i data-lucide="download"></i>
+                  <span>匯出活動報表 CSV</span>
+                </button>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>活動選項</th>
+                      <th>說明</th>
+                      <th>已選人數</th>
+                      <th>佔已報名比例</th>
+                      <th>報名人員</th>
+                    </tr>
+                  </thead>
+                  <tbody id="optionsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="config" class="section hidden">
+            <div class="section-head">
+              <div>
+                <h2>活動設定</h2>
+                <p class="muted">修改抬頭、活動標題、說明、活動開始與截止時間及參加選項</p>
+              </div>
+              <button id="saveConfigBtn" class="btn btn-primary" type="button">
+                <i data-lucide="save"></i>
+                <span>儲存設定</span>
+              </button>
+            </div>
+            <div class="panel">
+              <div class="config-grid">
+                <label class="field">
+                  <span>名稱抬頭</span>
+                  <input id="siteTitle" maxlength="80" placeholder="例如：中華電信會員活動報名">
+                </label>
+                <label class="field">
+                  <span>活動標題</span>
+                  <input id="eventTitle" maxlength="120" placeholder="例如：2026 會員盛夏交流會">
+                </label>
+              </div>
+              <label class="field">
+                <span>活動說明</span>
+                <textarea id="description" rows="3" maxlength="1000" placeholder="報名頁顯示的活動說明"></textarea>
+              </label>
+              <div class="config-grid event-time-grid">
+                <label class="field">
+                  <span>活動開始日期</span>
+                  <input id="startDate" type="date">
+                </label>
+                <label class="field">
+                  <span>活動開始時間</span>
+                  <input id="startTime" type="time" value="17:30">
+                </label>
+                <label class="field">
+                  <span>活動截止日期</span>
+                  <input id="endDate" type="date">
+                </label>
+                <label class="field">
+                  <span>活動截止時間</span>
+                  <input id="endTime" type="time" value="17:30">
+                </label>
+              </div>
+              <p class="muted event-time-hint">時間未填寫時，預設為下班時間 17:30</p>
+              <label class="field">
+                <span>QR Code 網址（選填）</span>
+                <input id="qrUrl" placeholder="留空時自動使用目前網址">
+              </label>
+              <p class="muted event-time-hint">放到雲端硬碟或正式網址後，可貼上正確連結讓 QR Code 對應</p>
+              <label class="toggle-field">
+                <span>
+                  <strong>開放報名</strong>
+                  <small>關閉後報名頁無法送出</small>
+                </span>
+                <input id="openToggle" type="checkbox" role="switch">
+              </label>
+            </div>
+            <div class="panel">
+              <div class="panel-head-row">
+                <div>
+                  <h3>參加選項</h3>
+                  <p class="muted">單選；建議保留「不克參加」選項讓全部會員都完成報名程序</p>
+                </div>
+                <button id="addOptionBtn" class="btn btn-ghost" type="button">
+                  <i data-lucide="plus"></i>
+                  <span>新增選項</span>
+                </button>
+              </div>
+              <div id="optionEditor" class="option-editor"></div>
+            </div>
+          </section>
+
+          <section id="roster" class="section hidden">
+            <div class="section-head">
+              <div>
+                <h2>名冊匯入</h2>
+                <p class="muted">匯入中華電信會員清冊 CSV，匯入前可先確認欄位對應</p>
+              </div>
+              <div id="rosterSummary" class="roster-summary"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head-row">
+                <div>
+                  <h3>選擇 CSV 檔案</h3>
+                  <p class="muted">支援 UTF-8、BOM、引號包夾逗號等常見格式</p>
+                </div>
+              </div>
+              <input id="csvFile" type="file" accept=".csv,text/csv">
+              <div id="csvPreview" class="hidden"></div>
+            </div>
+            <div class="panel danger-panel">
+              <div class="panel-head-row">
+                <div>
+                  <h3>資料管理</h3>
+                  <p class="muted">重置範例資料，或清空名冊與報名資料後重新開始</p>
+                </div>
+                <div class="btn-group">
+                  <button id="resetSampleBtn" class="btn btn-ghost" type="button">重置範例資料</button>
+                  <button id="clearAllBtn" class="btn btn-danger" type="button">清空全部資料</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="people" class="section hidden">
+            <div class="section-head">
+              <div>
+                <h2>人員清冊</h2>
+                <p class="muted">已報名與未報名人員即時清單</p>
+              </div>
+              <button id="exportPeopleBtn" class="btn btn-teal" type="button">
+                <i data-lucide="download"></i>
+                <span>匯出目前清冊 CSV</span>
+              </button>
+            </div>
+            <div class="panel">
+              <div class="people-toolbar">
+                <div class="segmented">
+                  <button class="seg active" data-people-mode="registered" type="button">已報名</button>
+                  <button class="seg" data-people-mode="unregistered" type="button">未報名</button>
+                </div>
+                <input id="peopleSearch" class="search-input" type="search" placeholder="搜尋姓名、會員編號、部門…">
+                <select id="peopleFilter" class="select-input">
+                  <option value="all">全部選項</option>
+                </select>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr id="peopleHead"></tr>
+                  </thead>
+                  <tbody id="peopleBody"></tbody>
+                </table>
+              </div>
+              <p id="peopleCount" class="muted table-note"></p>
+            </div>
+          </section>
+
+          <section id="datacheck" class="section hidden">
+            <div class="section-head">
+              <div>
+                <h2>資料檢查</h2>
+                <p class="muted">自動排查名冊與報名資料中的異常</p>
+              </div>
+              <button id="runDataCheckBtn" class="btn btn-ghost" type="button">
+                <i data-lucide="refresh-cw"></i>
+                <span>重新檢查</span>
+              </button>
+            </div>
+            <div id="dataCheckResult" class="panel"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>送出前請確認</h3>
+        <button id="confirmClose" class="btn btn-icon" type="button" aria-label="關閉">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <p class="modal-hint">請確認有無填寫錯誤</p>
+      <div id="confirmSummary" class="confirm-summary"></div>
+      <div class="confirm-actions">
+        <button id="confirmBack" class="btn btn-ghost" type="button">返回修改</button>
+        <button id="confirmSubmit" class="btn btn-primary" type="button">確認無誤，送出報名</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+  <script>
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(row * cellSize, col * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+'use strict';
+
+const STORAGE_KEY = 'cht_registration_static_v1';
+const ADMIN_PASSWORD = 'Wishadmin';
+
+const SAMPLE_OPTIONS = [
+  { id: 'op1', label: '羽球友誼賽', desc: '08:30-12:00｜桃園巨蛋', color: '#003d79' },
+  { id: 'op2', label: '親子野餐趣', desc: '10:00-15:00｜大安森林公園', color: '#f26522' },
+  { id: 'op3', label: '企業參訪', desc: '09:00-12:00｜中華電信學院', color: '#1f6fb2' },
+  { id: 'op4', label: '不克參加', desc: '今年無法到場，仍可完成報名程序', color: '#7a8ba3' }
+];
+
+const SAMPLE_MEMBERS = [
+  { memberNo: 'CHT-001', name: '王小明', phone: '0912-345-001', department: '行動通信分公司', email: 'wang.xm@cht.com.tw' },
+  { memberNo: 'CHT-002', name: '林怡君', phone: '0912-345-002', department: '企業客戶分公司', email: 'lin.yj@cht.com.tw' },
+  { memberNo: 'CHT-003', name: '陳志豪', phone: '0912-345-003', department: '資訊技術分公司', email: 'chen.zh@cht.com.tw' },
+  { memberNo: 'CHT-004', name: '張雅婷', phone: '0912-345-004', department: '數據通信分公司', email: 'zhang.yt@cht.com.tw' },
+  { memberNo: 'CHT-005', name: '李建宏', phone: '0912-345-005', department: '北區分公司', email: 'li.jh@cht.com.tw' },
+  { memberNo: 'CHT-006', name: '黃佩珊', phone: '0912-345-006', department: '中區分公司', email: 'huang.ps@cht.com.tw' },
+  { memberNo: 'CHT-007', name: '劉冠廷', phone: '0912-345-007', department: '南區分公司', email: 'liu.gt@cht.com.tw' },
+  { memberNo: 'CHT-008', name: '吳欣怡', phone: '0912-345-008', department: '國際電信分公司', email: 'wu.xy@cht.com.tw' },
+  { memberNo: 'CHT-009', name: '蔡孟哲', phone: '0912-345-009', department: '中華電信研究院', email: 'cai.mz@cht.com.tw' },
+  { memberNo: 'CHT-010', name: '許芳儀', phone: '0912-345-010', department: '客服中心', email: 'xu.fy@cht.com.tw' },
+  { memberNo: 'CHT-011', name: '謝承翰', phone: '0912-345-011', department: '行動通信分公司', email: 'xie.ch@cht.com.tw' },
+  { memberNo: 'CHT-012', name: '邱姿婷', phone: '0912-345-012', department: '資訊技術分公司', email: 'qiu.zt@cht.com.tw' },
+  { memberNo: 'CHT-013', name: '羅文豪', phone: '0912-345-013', department: '企業客戶分公司', email: 'luo.wh@cht.com.tw' },
+  { memberNo: 'CHT-014', name: '曾雅雯', phone: '0912-345-014', department: '數據通信分公司', email: 'zeng.yw@cht.com.tw' }
+];
+
+const SAMPLE_REGISTRATIONS = [
+  { memberNo: 'CHT-001', options: ['op1'], submittedAt: '2026-08-03T09:12:00+08:00' },
+  { memberNo: 'CHT-002', options: ['op1'], submittedAt: '2026-08-03T10:40:00+08:00' },
+  { memberNo: 'CHT-003', options: ['op2'], submittedAt: '2026-08-03T14:05:00+08:00' },
+  { memberNo: 'CHT-004', options: ['op3'], submittedAt: '2026-08-04T08:30:00+08:00' },
+  { memberNo: 'CHT-005', options: ['op1'], submittedAt: '2026-08-04T11:20:00+08:00' },
+  { memberNo: 'CHT-006', options: ['op4'], submittedAt: '2026-08-04T16:45:00+08:00' },
+  { memberNo: 'CHT-007', options: ['op2'], submittedAt: '2026-08-05T09:05:00+08:00' },
+  { memberNo: 'CHT-008', options: ['op1'], submittedAt: '2026-08-05T10:18:00+08:00' },
+  { memberNo: 'CHT-009', options: ['op3'], submittedAt: '2026-08-05T13:37:00+08:00' },
+  { memberNo: 'CHT-010', options: ['op2'], submittedAt: '2026-08-05T15:52:00+08:00' }
+];
+
+function defaultConfig() {
+  return {
+    siteTitle: '中華電信會員活動報名',
+    eventTitle: '2026 會員盛夏交流會',
+    description: '邀請會員一起參加年度盛夏交流，請選擇您想參加的一項活動。',
+    startAt: '2026-08-01T09:00',
+    deadline: '2026-08-20T17:30',
+    qrUrl: '',
+    open: true,
+    options: SAMPLE_OPTIONS.map((o) => ({ ...o }))
+  };
+}
+
+function defaultState() {
+  return {
+    config: defaultConfig(),
+    members: SAMPLE_MEMBERS.map((m) => ({ ...m })),
+    registrations: SAMPLE_REGISTRATIONS.map((r) => ({ ...r }))
+  };
+}
+
+function loadState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (parsed && parsed.config && Array.isArray(parsed.config.options)) {
+      return parsed;
+    }
+  } catch {}
+  return defaultState();
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function $(selector, root = document) {
+  return root.querySelector(selector);
+}
+
+function $$(selector, root = document) {
+  return Array.from(root.querySelectorAll(selector));
+}
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (value == null) continue;
+    if (key === 'class') node.className = value;
+    else if (key === 'style') node.setAttribute('style', value);
+    else if (key === 'dataset') Object.assign(node.dataset, value);
+    else if (key.startsWith('on') && typeof value === 'function') node.addEventListener(key.slice(2), value);
+    else node.setAttribute(key, value);
+  }
+  for (const child of children.flat()) {
+    if (child == null) continue;
+    node.append(child.nodeType ? child : document.createTextNode(String(child)));
+  }
+  return node;
+}
+
+function setText(selector, text) {
+  const node = $(selector);
+  if (node) node.textContent = text;
+}
+
+function refreshIcons() {
+  if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+}
+
+function normalizeKey(value) {
+  return String(value || '').trim().toUpperCase();
+}
+
+function normalizePhone(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function formatDateTime(value) {
+  if (!value) return '未設定';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function toDateOnly(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function toTimeOnly(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function csvCell(value) {
+  const text = String(value == null ? '' : value);
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function downloadCsv(filename, text) {
+  const blob = new Blob([`\uFEFF${text}`], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = el('a', { href: url, download: filename });
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function parseCsv(text) {
+  const source = String(text || '').replace(/^\uFEFF/, '');
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  for (let i = 0; i < source.length; i += 1) {
+    const ch = source[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (source[i + 1] === '"') { field += '"'; i += 1; } else inQuotes = false;
+      } else field += ch;
+    } else if (ch === '"') inQuotes = true;
+    else if (ch === ',') { row.push(field); field = ''; }
+    else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else if (ch !== '\r') field += ch;
+  }
+  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+  return rows.filter((r) => r.some((cell) => String(cell).trim() !== ''));
+}
+
+function toast(message, type = 'ok') {
+  const box = el('div', { class: `toast ${type}`, textContent: message });
+  document.body.append(box);
+  setTimeout(() => box.remove(), 2600);
+}
+
+let state = loadState();
+let pendingPayload = null;
+let peopleMode = 'registered';
+let peopleSearch = '';
+let peopleFilter = 'all';
+let csvText = '';
+let csvHeaders = [];
+let csvRows = [];
+
+function optionLabel(id) {
+  const option = (state.config.options || []).find((o) => o.id === id);
+  return option ? option.label : id;
+}
+
+function findMember(memberNo) {
+  return (state.members || []).find((m) => normalizeKey(m.memberNo) === normalizeKey(memberNo));
+}
+
+function uniqueRegistrations() {
+  const map = new Map();
+  (state.registrations || []).forEach((reg) => map.set(normalizeKey(reg.memberNo), reg));
+  return [...map.values()];
+}
+
+function qrResolvedUrl() {
+  return state.config.qrUrl || (window.location.href || '').split('#')[0];
+}
+
+function renderQrCode() {
+  const url = qrResolvedUrl();
+  setText('#qrUrlText', url);
+  const box = $('#qrCode');
+  box.innerHTML = '';
+  if (typeof qrcode !== 'function') {
+    box.append(el('span', { class: 'qr-loading' }, 'QR Code 產生器尚未載入'));
+    return;
+  }
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    box.append(el('img', { src: qr.createDataURL(8, 4), alt: '報名頁 QR Code' }));
+  } catch {
+    box.append(el('span', { class: 'qr-loading' }, '無法產生 QR Code'));
+  }
+}
+
+function renderPublic() {
+  const config = state.config;
+  document.title = config.siteTitle || '報名統計系統';
+  setText('#footerTitle', config.siteTitle);
+  setText('#eventTitle', config.eventTitle);
+  setText('#eventDesc', config.description);
+  setText('#startText', `報名開始：${config.startAt ? formatDateTime(config.startAt) : '未設定開始時間'}`);
+  setText('#deadlineText', `報名截止：${config.deadline ? formatDateTime(config.deadline) : '未設定截止時間'}`);
+
+  const statusChip = $('#statusChip');
+  const statusText = $('#statusText');
+  const now = Date.now();
+  const notStarted = config.startAt && new Date(config.startAt).getTime() > now;
+  const ended = config.deadline && new Date(config.deadline).getTime() <= now;
+  statusChip.classList.remove('status-live', 'status-wait', 'status-ended', 'status-closed');
+  let statusLabel = '報名進行中';
+  if (!config.open) statusLabel = '報名已關閉';
+  else if (notStarted) statusLabel = '報名尚未開始';
+  else if (ended) statusLabel = '報名已截止';
+  statusText.textContent = statusLabel;
+  statusChip.classList.add(statusLabel === '報名進行中' ? 'status-live' : statusLabel === '報名尚未開始' ? 'status-wait' : statusLabel === '報名已截止' ? 'status-ended' : 'status-closed');
+
+  $('#manualFields').classList.toggle('hidden', state.members.length > 0);
+
+  const grid = $('#options');
+  grid.innerHTML = '';
+  config.options.forEach((option) => {
+    const label = el('label', { class: 'option-card', style: `--opt-color:${option.color}` });
+    const input = el('input', { type: 'radio', name: 'event-option', value: option.id });
+    const body = el('span', { class: 'option-body' });
+    body.append(el('span', { class: 'option-title' }, option.label));
+    if (option.desc) body.append(el('span', { class: 'option-desc' }, option.desc));
+    input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
+    label.append(input, body);
+    grid.append(label);
+  });
+  renderQrCode();
+  refreshIcons();
+}
+
+function showConfirm(payload) {
+  pendingPayload = payload;
+  const summary = $('#confirmSummary');
+  summary.innerHTML = '';
+  const labels = payload.options.map((id) => optionLabel(id)).join('、');
+  [['姓名', payload.name], ['手機', payload.phone || '未填寫'], ['身分證', payload.idCard || '未填寫'], ['出生年月日', payload.birthDate || '未填寫'], ['參加選項', labels]]
+    .forEach(([label, value]) => summary.append(el('div', { class: 'confirm-row' }, el('span', {}, label), el('strong', {}, value))));
+  $('#confirmModal').classList.remove('hidden');
+  refreshIcons();
+}
+
+function closeConfirm() {
+  $('#confirmModal').classList.add('hidden');
+}
+
+async function submitRegistration(payload) {
+  const config = state.config;
+  if (!config.open) return showError('報名目前已關閉');
+  if (config.startAt && Date.parse(config.startAt) > Date.now()) return showError('報名尚未開始，請於開始時間後再送出');
+  if (config.deadline && Date.parse(config.deadline) <= Date.now()) return showError('報名已截止，無法再送出');
+
+  let member = null;
+  const members = state.members;
+  if (members.length > 0) {
+    const nameMatches = members.filter((m) => m.name && normalizeKey(m.name) === normalizeKey(payload.name));
+    if (nameMatches.length === 0) return showError('此姓名不在名冊中');
+    if (nameMatches.length === 1) member = nameMatches[0];
+    else {
+      const phoneMatches = nameMatches.filter((m) => m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone));
+      if (phoneMatches.length === 1) member = phoneMatches[0];
+      else return showError('名冊中有同名會員，請輸入正確的手機號碼');
+    }
+  } else {
+    member = { memberNo: '', name: payload.name, phone: payload.phone, email: payload.email, idCard: payload.idCard, birthDate: payload.birthDate, department: '' };
+    const existing = members.find((m) => m.memberNo.startsWith('M-') && normalizeKey(m.name) === normalizeKey(payload.name) && (!payload.phone || (m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone))));
+    if (existing) { Object.assign(existing, member); member = existing; }
+    else { member.memberNo = `M-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`; members.push(member); }
+  }
+
+  const optionLabels = {};
+  payload.options.forEach((id) => { optionLabels[id] = optionLabel(id); });
+  const now = new Date().toISOString();
+  const existingReg = state.registrations.find((r) => normalizeKey(r.memberNo) === normalizeKey(member.memberNo));
+  if (existingReg) {
+    existingReg.options = payload.options;
+    existingReg.optionLabels = optionLabels;
+    existingReg.idCard = payload.idCard;
+    existingReg.birthDate = payload.birthDate;
+    existingReg.submittedAt = now;
+  } else {
+    state.registrations.push({ memberNo: member.memberNo, options: payload.options, optionLabels, idCard: payload.idCard, birthDate: payload.birthDate, submittedAt: now });
+  }
+  saveState();
+  showResult(existingReg ? '報名已更新' : '報名成功', payload, now);
+}
+
+function showResult(title, payload, submittedAt) {
+  const box = $('#result');
+  box.classList.remove('hidden');
+  box.innerHTML = '';
+  const labels = payload.options.map((id) => optionLabel(id)).join('、');
+  const tags = el('div', { class: 'result-tags' });
+  payload.options.forEach((id) => { const option = state.config.options.find((o) => o.id === id); if (option) tags.append(el('span', { class: 'result-tag' }, option.label)); });
+  box.append(
+    el('div', { class: 'result-head' }, el('i', { 'data-lucide': 'circle-check-big' }), title),
+    el('p', {}, `姓名：${payload.name}${payload.phone ? `｜手機：${payload.phone}` : ''}`),
+    el('p', {}, `送出時間：${formatDateTime(submittedAt)}`),
+    el('p', {}, `參加選項：${labels}`),
+    tags
+  );
+  refreshIcons();
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showError(message) {
+  const box = $('#formError');
+  box.textContent = message;
+  box.classList.remove('hidden');
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+  $('#formError').classList.add('hidden');
+  const name = $('#memberName').value.trim();
+  const phone = $('#memberPhone').value.trim();
+  const email = $('#memberEmail').value.trim();
+  const idCard = $('#memberId').value.trim();
+  const birthDate = $('#memberBirth').value;
+  const options = $$('#options input:checked').map((input) => input.value);
+  if (!name) return showError('請輸入姓名');
+  if (options.length === 0) return showError('請選擇一個參加選項');
+  if (options.length > 1) return showError('報名選項僅能選擇一項');
+  if (idCard && !/^[A-Za-z][0-9]{9}$/.test(idCard)) return showError('身分證字號需為 10 碼（1 個英文字母 + 9 個數字）');
+  const payload = { name, phone, email, idCard, birthDate, options };
+  if (idCard || birthDate) showConfirm(payload);
+  else await submitRegistration(payload);
+}
+
+async function submitPending() {
+  closeConfirm();
+  await submitRegistration(pendingPayload);
+}
+
+function statBlock(label, value, className) {
+  return el('div', { class: `stat ${className}` }, el('span', {}, label), el('strong', {}, value));
+}
+
+function renderLastUpdated() {
+  setText('#lastUpdated', `最後更新 ${formatDateTime(new Date().toISOString())}｜資料存於本機瀏覽器`);
+}
+
+function renderDeadlinePreview() {
+  const members = state.members || [];
+  const regs = uniqueRegistrations();
+  const total = members.length;
+  const registered = regs.length;
+  const unregistered = Math.max(total - registered, 0);
+  const rate = total ? Math.round((registered / total) * 100) : 0;
+  const selections = regs.reduce((sum, reg) => sum + (reg.options || []).length, 0);
+  const now = Date.now();
+  const startAt = state.config.startAt ? new Date(state.config.startAt) : null;
+  const deadline = state.config.deadline ? new Date(state.config.deadline) : null;
+  let status = '未設定';
+  if (startAt && !Number.isNaN(startAt.getTime()) && now < startAt.getTime()) status = '報名尚未開始';
+  else if (deadline && !Number.isNaN(deadline.getTime())) {
+    const diff = deadline.getTime() - now;
+    status = diff > 0 ? `剩餘 ${Math.floor(diff / 86400000)} 天 ${Math.floor((diff % 86400000) / 3600000)} 小時` : '報名已截止';
+  }
+  const startText = startAt && !Number.isNaN(startAt.getTime()) ? formatDateTime(state.config.startAt) : '未設定';
+  const deadlineText = deadline && !Number.isNaN(deadline.getTime()) ? formatDateTime(state.config.deadline) : '未設定';
+  const preview = $('#deadlinePreview');
+  preview.innerHTML = '';
+  preview.append(
+    el('div', { class: 'preview-head' }, el('strong', {}, el('i', { 'data-lucide': 'clipboard-list' }), '截止總覽預覽'), el('span', { class: 'muted' }, `報名期間 ${startText} 至 ${deadlineText}`)),
+    el('div', { class: 'stat-grid' },
+      statBlock('名冊總人數', total, 'stat-coral'),
+      statBlock('已報名', registered, 'stat-teal'),
+      statBlock('未報名', unregistered, 'stat-amber'),
+      statBlock('報名率', `${rate}%`, 'stat-violet'),
+      statBlock('選項累計人次', selections, 'stat-coral')
+    ),
+    el('div', { class: 'preview-meta' },
+      el('span', {}, `報名開始：<strong>${startText}</strong>`),
+      el('span', {}, `報名截止：<strong>${deadlineText}</strong>`),
+      el('span', {}, `目前狀態：<strong>${status}</strong>`),
+      el('span', {}, `名冊人數：<strong>${total}</strong> 人`),
+      el('span', {}, `已報名：<strong>${registered}</strong> 人`),
+      el('span', {}, `未報名：<strong>${unregistered}</strong> 人`)
+    )
+  );
+  const bars = el('div', { class: 'option-bar-preview' });
+  state.config.options.forEach((option) => {
+    const count = regs.filter((reg) => (reg.options || []).includes(option.id)).length;
+    const percent = registered ? Math.round((count / registered) * 100) : 0;
+    bars.append(el('div', { class: 'mini-option-row' }, el('span', { class: 'mini-option-label' }, option.label, el('small', {}, `${count} 人`)), el('div', { class: 'bar' }, el('div', { class: 'bar-fill', style: `width:${percent}%;background:${option.color}` }))));
+  });
+  preview.append(bars);
+  refreshIcons();
+}
+
+function renderOptionsReport() {
+  const body = $('#optionsBody');
+  const regs = uniqueRegistrations();
+  const registered = regs.length;
+  body.innerHTML = '';
+  if (registered === 0) body.append(el('tr', {}, el('td', { colspan: '5' }, '尚無報名資料')));
+  state.config.options.forEach((option) => {
+    const selected = regs.filter((reg) => (reg.options || []).includes(option.id));
+    const count = selected.length;
+    const percent = registered ? Math.round((count / registered) * 100) : 0;
+    const members = el('div', { class: 'member-list' });
+    selected.forEach((reg) => {
+      const member = findMember(reg.memberNo);
+      members.append(el('span', { class: 'member-chip' }, member ? member.name : reg.memberNo, member && member.department ? el('span', {}, member.department) : null));
+    });
+    if (count === 0) members.append(el('span', { class: 'muted', style: 'font-size:13px' }, '尚無人選擇'));
+    body.append(el('tr', {}, el('td', {}, el('strong', { style: `color:${option.color}` }, option.label)), el('td', {}, option.desc || '—'), el('td', {}, el('strong', {}, count)), el('td', {}, `${percent}%`, el('div', { class: 'bar' }, el('div', { class: 'bar-fill', style: `width:${percent}%;background:${option.color}` }))), el('td', {}, members)));
+  });
+}
+
+function renderPeople() {
+  const head = $('#peopleHead');
+  const body = $('#peopleBody');
+  const regs = uniqueRegistrations();
+  const regByMember = new Map(regs.map((reg) => [normalizeKey(reg.memberNo), reg]));
+  const members = state.members || [];
+  const registered = members.filter((m) => regByMember.has(normalizeKey(m.memberNo))).map((m) => ({ ...m, reg: regByMember.get(normalizeKey(m.memberNo)) }));
+  const unregistered = members.filter((m) => !regByMember.has(normalizeKey(m.memberNo)));
+  const filter = (list) => list.filter((item) => {
+    const haystack = [item.memberNo, item.name, item.department, item.phone, item.email].join(' ').toLowerCase();
+    if (peopleSearch && !haystack.includes(peopleSearch.toLowerCase())) return false;
+    if (peopleMode === 'registered' && peopleFilter !== 'all' && !(item.reg.options || []).includes(peopleFilter)) return false;
+    return true;
+  });
+  const filterSelect = $('#peopleFilter');
+  const currentFilter = peopleFilter;
+  filterSelect.innerHTML = '';
+  filterSelect.append(el('option', { value: 'all' }, '全部選項'));
+  state.config.options.forEach((option) => filterSelect.append(el('option', { value: option.id }, option.label)));
+  peopleFilter = state.config.options.some((o) => o.id === currentFilter) ? currentFilter : 'all';
+  filterSelect.value = peopleFilter;
+
+  let rows;
+  let headers;
+  if (peopleMode === 'registered') {
+    headers = ['會員編號', '姓名', '部門', '手機', '身分證', '出生年月日', '參加選項', '報名時間'];
+    rows = filter(registered).slice().sort((a, b) => new Date(b.reg.submittedAt) - new Date(a.reg.submittedAt));
+  } else {
+    headers = ['會員編號', '姓名', '部門', '手機', 'Email'];
+    rows = filter(unregistered);
+  }
+  head.innerHTML = '';
+  headers.forEach((header) => head.append(el('th', {}, header)));
+  body.innerHTML = '';
+  if (rows.length === 0) body.append(el('tr', {}, el('td', { colspan: headers.length }, '目前沒有符合條件的人員')));
+  else rows.forEach((item) => {
+    const tr = el('tr');
+    if (peopleMode === 'registered') {
+      const chips = el('div', { class: 'member-list' });
+      (item.reg.options || []).forEach((id) => chips.append(el('span', { class: 'member-chip' }, optionLabel(id))));
+      tr.append(el('td', {}, item.memberNo), el('td', {}, el('strong', {}, item.name || '—')), el('td', {}, item.department || '—'), el('td', {}, item.phone || '—'), el('td', {}, item.reg.idCard || '—'), el('td', {}, item.reg.birthDate ? toDateOnly(item.reg.birthDate) : '—'), el('td', {}, chips), el('td', {}, formatDateTime(item.reg.submittedAt)));
+    } else {
+      tr.append(el('td', {}, item.memberNo), el('td', {}, el('strong', {}, item.name || '—')), el('td', {}, item.department || '—'), el('td', {}, item.phone || '—'), el('td', {}, item.email || '—'));
+    }
+    body.append(tr);
+  });
+  setText('#peopleCount', `顯示 ${rows.length} / ${peopleMode === 'registered' ? registered.length : unregistered.length} 人`);
+}
+
+function renderRosterSummary() {
+  const members = state.members || [];
+  const registered = uniqueRegistrations().length;
+  const box = $('#rosterSummary');
+  box.innerHTML = '';
+  box.append(statBlock('名冊人數', members.length, 'stat-teal'), statBlock('已報名', registered, 'stat-amber'), statBlock('未報名', Math.max(members.length - registered, 0), 'stat-coral'));
+}
+
+function renderDataCheck() {
+  const box = $('#dataCheckResult');
+  box.innerHTML = '';
+  const issues = [];
+  const members = state.members || [];
+  const regs = state.registrations || [];
+  const memberKeys = new Set();
+  members.forEach((member) => {
+    const key = normalizeKey(member.memberNo);
+    if (!key) issues.push({ title: '名冊缺少會員編號', item: member.name || '未命名' });
+    else if (memberKeys.has(key)) issues.push({ title: '名冊會員編號重複', item: `${member.name || '未命名'}（${member.memberNo}）` });
+    memberKeys.add(key);
+  });
+  const configIds = new Set(state.config.options.map((o) => o.id));
+  const regKeys = new Set();
+  regs.forEach((reg) => {
+    const key = normalizeKey(reg.memberNo);
+    if (!memberKeys.has(key)) issues.push({ title: '報名資料找不到對應名冊', item: reg.memberNo });
+    if (regKeys.has(key)) issues.push({ title: '同一會員重複報名', item: reg.memberNo });
+    regKeys.add(key);
+    if (reg.idCard && !/^[A-Za-z][0-9]{9}$/.test(reg.idCard)) issues.push({ title: '身分證字號不是 10 碼', item: `${reg.memberNo}：${reg.idCard}` });
+    if (reg.birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate)) issues.push({ title: '出生年月日格式異常', item: `${reg.memberNo}：${reg.birthDate}` });
+    const stale = (reg.options || []).filter((id) => !configIds.has(id));
+    if (stale.length) issues.push({ title: '報名選項已被刪除', item: `${reg.memberNo}：${stale.join('、')}` });
+  });
+  const grouped = new Map();
+  issues.forEach((issue) => { if (!grouped.has(issue.title)) grouped.set(issue.title, []); grouped.get(issue.title).push(issue.item); });
+  if (grouped.size === 0) box.append(el('div', { class: 'data-check-ok' }, el('i', { 'data-lucide': 'circle-check-big' }), el('strong', {}, '未發現資料問題'), el('span', {}, `已檢查 ${members.length} 位名冊、${regs.length} 筆報名資料`)));
+  else grouped.forEach((items, title) => box.append(el('div', { class: 'issue-card' }, el('div', { class: 'issue-head' }, el('strong', {}, title), el('span', { class: 'issue-count' }, `${items.length} 筆`)), el('div', { class: 'issue-list' }, items.slice(0, 20).map((item) => el('span', { class: 'issue-item' }, item))))));
+  refreshIcons();
+}
+
+async function renderQrStatus(forceCheck = false) {
+  const box = $('#qrStatusBox');
+  if (!box) return;
+  const url = qrResolvedUrl();
+  const source = state.config.qrUrl ? 'configured' : 'auto';
+  box.innerHTML = '';
+  const img = el('img', { class: 'qr-status-img', alt: '後台 QR Code' });
+  try {
+    const qr = qrcode(0, 'M');
+    qr.addData(url || 'about:blank');
+    qr.make();
+    img.src = qr.createDataURL(8, 4);
+  } catch { img.replaceWith(el('span', { class: 'muted' }, 'QR Code 產生器未載入')); }
+  const info = el('div', { class: 'qr-status-info' }, el('div', { class: 'qr-status-url' }, el('span', {}, source === 'configured' ? '自訂網址' : '自動偵測網址'), el('strong', {}, url || '未設定')), el('span', { class: 'qr-status-badge qr-status-pending' }, '檢查中…'));
+  box.append(img, info);
+  refreshIcons();
+  const status = await checkQrUrl(url);
+  const badge = box.querySelector('.qr-status-badge');
+  if (badge) {
+    badge.textContent = status.ok ? '可用' : (status.ok === null ? '待確認' : '需設定');
+    badge.className = `qr-status-badge ${status.ok ? 'qr-status-ok' : (status.ok === null ? 'qr-status-warn' : 'qr-status-bad')}`;
+  }
+  const hint = $('#qrStatusHint');
+  if (hint && status.reason) hint.textContent = status.reason;
+}
+
+async function checkQrUrl(url) {
+  if (!url) return { ok: false, reason: '尚未設定 QR 網址' };
+  try {
+    const parsed = new URL(url);
+    if (!/^https?:$/.test(parsed.protocol)) return { ok: false, reason: '目前不是網頁網址（file:// 無法分享），請在活動設定填入正式網址' };
+  } catch { return { ok: false, reason: 'QR 網址格式不正確' }; }
+  try {
+    const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+    if (response.type === 'opaque' || response.status < 500) return { ok: true, reason: '網址可開啟，QR Code 已更新' };
+    return { ok: false, reason: '目前無法連線到該網址' };
+  } catch { return { ok: null, reason: '無法即時連線檢查（可能是跨網域限制），網址格式正確且可於瀏覽器開啟' }; }
+}
+
+function renderAll() {
+  renderLastUpdated();
+  renderDeadlinePreview();
+  renderOptionsReport();
+  renderPeople();
+  renderRosterSummary();
+  renderDataCheck();
+  void renderQrStatus();
+}
+
+function renderConfigForm() {
+  const config = state.config;
+  $('#siteTitle').value = config.siteTitle || '';
+  $('#eventTitle').value = config.eventTitle || '';
+  $('#description').value = config.description || '';
+  $('#startDate').value = toDateOnly(config.startAt);
+  $('#startTime').value = toTimeOnly(config.startAt) || '17:30';
+  $('#endDate').value = toDateOnly(config.deadline);
+  $('#endTime').value = toTimeOnly(config.deadline) || '17:30';
+  $('#qrUrl').value = config.qrUrl || '';
+  $('#openToggle').checked = Boolean(config.open);
+  const editor = $('#optionEditor');
+  editor.innerHTML = '';
+  (config.options || []).forEach((option) => addOptionRow(option));
+}
+
+function addOptionRow(option) {
+  const editor = $('#optionEditor');
+  const row = el('div', { class: 'option-row' });
+  row.dataset.id = option.id || '';
+  const color = el('input', { type: 'color', value: option.color || '#003d79', 'aria-label': '選項顏色' });
+  const labelInput = el('input', { type: 'text', value: option.label || '', placeholder: '選項名稱', maxlength: '80' });
+  const descInput = el('input', { type: 'text', value: option.desc || '', placeholder: '說明（選填）', maxlength: '160' });
+  const removeBtn = el('button', { class: 'btn btn-danger', type: 'button', 'aria-label': '刪除選項' }, el('i', { 'data-lucide': 'trash-2' }));
+  removeBtn.addEventListener('click', () => { row.remove(); refreshIcons(); });
+  row.append(color, labelInput, descInput, removeBtn);
+  editor.append(row);
+  refreshIcons();
+}
+
+function saveConfig() {
+  const rows = $$('#optionEditor .option-row').map((row) => {
+    const inputs = row.querySelectorAll('input');
+    return { id: row.dataset.id || '', label: inputs[1].value.trim(), desc: inputs[2].value.trim(), color: inputs[0].value };
+  });
+  if (!rows.some((option) => option.label)) return toast('至少需要一個有名稱的活動選項', 'error');
+  const combineEventTime = (dateId, timeId) => {
+    const date = $(dateId).value;
+    if (!date) return '';
+    return `${date}T${$(timeId).value || '17:30'}`;
+  };
+  const startAt = combineEventTime('#startDate', '#startTime');
+  const deadline = combineEventTime('#endDate', '#endTime');
+  if (startAt && deadline && Date.parse(startAt) > Date.parse(deadline)) return toast('活動開始時間不能晚於截止時間', 'error');
+  const qrUrl = $('#qrUrl').value.trim();
+  if (qrUrl && !/^https?:\/\//i.test(qrUrl)) return toast('QR 網址格式不正確，需以 http:// 或 https:// 開頭', 'error');
+  state.config = {
+    siteTitle: $('#siteTitle').value.trim(),
+    eventTitle: $('#eventTitle').value.trim(),
+    description: $('#description').value.trim(),
+    startAt,
+    deadline,
+    qrUrl,
+    open: $('#openToggle').checked,
+    options: rows.filter((option) => option.label)
+  };
+  saveState();
+  toast('設定已儲存');
+  renderConfigForm();
+  renderPublic();
+  renderAll();
+}
+
+function renderCsvPreview() {
+  const box = $('#csvPreview');
+  box.classList.remove('hidden');
+  box.innerHTML = '';
+  box.append(el('h3', {}, '欄位對應與預覽'), el('p', { class: 'muted', style: 'margin:0 0 12px' }, `偵測到 ${csvRows.length} 筆資料、${csvHeaders.length} 個欄位`));
+  const tableEl = el('table', { class: 'data-table' });
+  const thead = el('thead');
+  const tbody = el('tbody');
+  const headRow = el('tr');
+  csvHeaders.forEach((header) => headRow.append(el('th', {}, header)));
+  thead.append(headRow);
+  csvRows.slice(0, 6).forEach((row) => {
+    const tr = el('tr');
+    csvHeaders.forEach((header, index) => {
+      const cell = row[index] == null ? '' : String(row[index]);
+      tr.append(el('td', {}, cell.length > 60 ? `${cell.slice(0, 60)}…` : cell));
+    });
+    tbody.append(tr);
+  });
+  tableEl.append(thead, tbody);
+  box.append(el('div', { class: 'table-wrap' }, tableEl));
+  if (csvRows.length > 6) box.append(el('p', { class: 'preview-note' }, `僅顯示前 6 筆，全部 ${csvRows.length} 筆都會匯入`));
+  const mappingGrid = el('div', { class: 'mapping-grid' });
+  CSV_FIELDS.forEach(({ key, label }) => {
+    const select = el('select', { id: `map-${key}` });
+    select.append(el('option', { value: '' }, '不匯入'));
+    csvHeaders.forEach((header) => select.append(el('option', { value: header }, header)));
+    select.value = detectMapping()[key] || '';
+    mappingGrid.append(el('label', { class: 'field' }, el('span', {}, label), select));
+  });
+  box.append(mappingGrid);
+  box.append(el('label', { class: 'toggle-field', style: 'margin-bottom:14px' }, el('span', {}, el('strong', {}, '取代現有名冊'), el('small', {}, '勾選後會以本次檔案取代名冊，並移除不在新名冊中的報名')), el('input', { id: 'replaceRoster', type: 'checkbox', role: 'switch' })));
+  const importBtn = el('button', { class: 'btn btn-primary', type: 'button' }, el('i', { 'data-lucide': 'file-up' }), el('span', {}, '確認匯入名冊'));
+  importBtn.addEventListener('click', doImport);
+  box.append(importBtn);
+  refreshIcons();
+}
+
+const CSV_FIELDS = [
+  { key: 'memberNo', label: '會員編號（必填）' },
+  { key: 'name', label: '姓名' },
+  { key: 'phone', label: '手機' },
+  { key: 'department', label: '部門' },
+  { key: 'email', label: 'Email' }
+];
+
+const DETECT_RULES = {
+  memberNo: ['會員編號', '會員號', '會員號碼', '編號', '員工編號', '員工號', '工號', '員編', '會員id', 'memberno', 'member_no', 'memberid', 'empno', 'id'],
+  name: ['姓名', '中文姓名', '會員姓名', '員工姓名', '名稱', 'name'],
+  phone: ['手機', '手機號碼', '手機號', '電話', '聯絡電話', '行動電話', 'phone', 'mobile', 'tel'],
+  department: ['部門', '部門名稱', '單位', '科室', '組織', '分公司', 'department', 'dept'],
+  email: ['email', 'e-mail', '電子郵件', '電子郵箱', '信箱', '郵件']
+};
+
+function normalizeHeader(header) {
+  return header.toLowerCase().replace(/[\s()（）_\-.]/g, '');
+}
+
+function detectMapping() {
+  const mapping = {};
+  const normalizedHeaders = csvHeaders.map(normalizeHeader);
+  CSV_FIELDS.forEach(({ key }) => {
+    const rules = DETECT_RULES[key].map(normalizeHeader);
+    for (let i = 0; i < normalizedHeaders.length; i += 1) {
+      if (rules.includes(normalizedHeaders[i])) { mapping[key] = csvHeaders[i]; break; }
+    }
+  });
+  return mapping;
+}
+
+function doImport() {
+  const mapping = {};
+  CSV_FIELDS.forEach(({ key }) => { mapping[key] = $(`#map-${key}`).value; });
+  if (!mapping.memberNo) return toast('請先指定「會員編號」欄位', 'error');
+  const replace = $('#replaceRoster').checked;
+  const seen = new Set();
+  const imported = [];
+  let skipped = 0;
+  const headerIndex = new Map(csvHeaders.map((h, i) => [h, i]));
+  const pick = (row, field) => {
+    const col = mapping[field];
+    if (!col) return '';
+    const index = headerIndex.get(col);
+    return index == null ? '' : String(row[index] || '').trim();
+  };
+  csvRows.forEach((row) => {
+    const memberNo = pick(row, 'memberNo');
+    if (!memberNo) { skipped += 1; return; }
+    const key = normalizeKey(memberNo);
+    if (seen.has(key)) { skipped += 1; return; }
+    seen.add(key);
+    imported.push({ memberNo, name: pick(row, 'name'), phone: pick(row, 'phone'), department: pick(row, 'department'), email: pick(row, 'email') });
+  });
+  if (!imported.length) return toast('沒有可匯入的資料，請確認「會員編號」欄位', 'error');
+  let added = 0;
+  let updated = 0;
+  if (replace) {
+    const newKeys = new Set(imported.map((m) => normalizeKey(m.memberNo)));
+    state.registrations = state.registrations.filter((reg) => newKeys.has(normalizeKey(reg.memberNo)));
+    state.members = imported;
+    added = imported.length;
+  } else {
+    const existing = new Map(state.members.map((m) => [normalizeKey(m.memberNo), m]));
+    imported.forEach((member) => {
+      const old = existing.get(normalizeKey(member.memberNo));
+      if (old) { Object.assign(old, member); updated += 1; }
+      else { state.members.push(member); added += 1; }
+    });
+  }
+  saveState();
+  toast(`匯入完成：新增 ${added} 筆、更新 ${updated} 筆、略過 ${skipped} 筆`);
+  renderAll();
+  renderRosterSummary();
+}
+
+function resetData(mode) {
+  const label = mode === 'empty' ? '清空全部資料' : '重置範例資料';
+  const message = mode === 'empty' ? '確定要清空名冊與全部報名資料嗎？此動作無法復原。' : '確定要重置為範例資料嗎？目前名冊與報名資料會被取代。';
+  if (!window.confirm(message)) return;
+  state = mode === 'empty' ? { config: defaultConfig(), members: [], registrations: [] } : defaultState();
+  saveState();
+  toast(`${label}完成`);
+  renderAll();
+  renderConfigForm();
+}
+
+function exportOptionsCsv() {
+  const regs = uniqueRegistrations();
+  const rows = [['活動選項', '說明', '會員編號', '姓名', '部門', '手機']];
+  state.config.options.forEach((option) => {
+    regs.forEach((reg) => {
+      if ((reg.options || []).includes(option.id)) {
+        const member = findMember(reg.memberNo);
+        rows.push([option.label, option.desc || '', reg.memberNo, member ? member.name : '', member ? member.department : '', member ? member.phone : '']);
+      }
+    });
+  });
+  downloadCsv('活動選項報表.csv', rows.map((row) => row.map(csvCell).join(',')).join('\n'));
+}
+
+function exportPeopleCsv() {
+  const regs = uniqueRegistrations();
+  const regByMember = new Map(regs.map((reg) => [normalizeKey(reg.memberNo), reg]));
+  const members = state.members || [];
+  const list = peopleMode === 'registered' ? members.filter((m) => regByMember.has(normalizeKey(m.memberNo))) : members.filter((m) => !regByMember.has(normalizeKey(m.memberNo)));
+  const headers = peopleMode === 'registered' ? ['會員編號', '姓名', '部門', '手機', 'Email', '身分證', '出生年月日', '參加選項', '報名時間'] : ['會員編號', '姓名', '部門', '手機', 'Email'];
+  const rows = [headers];
+  list.forEach((member) => {
+    if (peopleMode === 'registered') {
+      const reg = regByMember.get(normalizeKey(member.memberNo));
+      rows.push([member.memberNo, member.name, member.department, member.phone, member.email, reg.idCard || '', reg.birthDate ? toDateOnly(reg.birthDate) : '', (reg.options || []).map((id) => optionLabel(id)).join('、'), formatDateTime(reg.submittedAt)]);
+    } else rows.push([member.memberNo, member.name, member.department, member.phone, member.email]);
+  });
+  downloadCsv(peopleMode === 'registered' ? '已報名人員清冊.csv' : '未報名人員清冊.csv', rows.map((row) => row.map(csvCell).join(',')).join('\n'));
+}
+
+function showAdmin() {
+  document.getElementById('publicPage').style.display = 'none';
+  const adminPage = document.getElementById('adminPage');
+  adminPage.classList.add('visible');
+  const authed = sessionStorage.getItem('static_admin_authed') === '1';
+  $('#loginScreen').classList.toggle('hidden', authed);
+  $('#app').classList.toggle('hidden', !authed);
+  if (authed) {
+    renderAll();
+    renderConfigForm();
+  }
+  refreshIcons();
+  window.scrollTo(0, 0);
+}
+
+function showPublic() {
+  document.getElementById('publicPage').style.display = '';
+  document.getElementById('adminPage').classList.remove('visible');
+  renderPublic();
+  window.scrollTo(0, 0);
+}
+
+function route() {
+  if (window.location.hash.startsWith('#/admin')) showAdmin();
+  else showPublic();
+}
+
+function bindEvents() {
+  $('#adminBtn').addEventListener('click', () => { window.location.hash = '#/admin'; });
+  $('#backHome').addEventListener('click', () => { window.location.hash = ''; });
+  $('#adminLoginForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const errorBox = $('#adminLoginError');
+    errorBox.classList.add('hidden');
+    if ($('#adminPassword').value === ADMIN_PASSWORD) {
+      sessionStorage.setItem('static_admin_authed', '1');
+      showAdmin();
+    } else {
+      errorBox.textContent = '帳號或密碼錯誤';
+      errorBox.classList.remove('hidden');
+    }
+  });
+  $('#logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('static_admin_authed');
+    window.location.hash = '';
+  });
+  $('#refreshBtn').addEventListener('click', () => { renderAll(); void renderQrStatus(true); });
+  $('#qrCheckBtn').addEventListener('click', () => { void renderQrStatus(true); });
+  $('#runDataCheckBtn').addEventListener('click', renderAll);
+  $$('.nav-item').forEach((button) => {
+    button.addEventListener('click', () => {
+      $$('.nav-item').forEach((item) => item.classList.toggle('active', item === button));
+      $$('.section').forEach((section) => section.classList.toggle('hidden', section.id !== button.dataset.section));
+    });
+  });
+  $('#saveConfigBtn').addEventListener('click', saveConfig);
+  $('#addOptionBtn').addEventListener('click', () => addOptionRow({}));
+  $('#csvFile').addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    csvText = await file.text();
+    const rows = parseCsv(csvText);
+    if (rows.length < 2) return toast('CSV 需要至少一列標題與一列資料', 'error');
+    csvHeaders = rows[0].map((cell) => String(cell).trim());
+    csvRows = rows.slice(1);
+    renderCsvPreview();
+  });
+  $('#resetSampleBtn').addEventListener('click', () => resetData('sample'));
+  $('#clearAllBtn').addEventListener('click', () => resetData('empty'));
+  $('#exportOptionsBtn').addEventListener('click', exportOptionsCsv);
+  $('#exportPeopleBtn').addEventListener('click', exportPeopleCsv);
+  $('#peopleSearch').addEventListener('input', (event) => { peopleSearch = event.target.value.trim(); renderPeople(); });
+  $('#peopleFilter').addEventListener('change', (event) => { peopleFilter = event.target.value; renderPeople(); });
+  $$('.seg').forEach((button) => button.addEventListener('click', () => {
+    peopleMode = button.dataset.peopleMode;
+    $$('.seg').forEach((seg) => seg.classList.toggle('active', seg === button));
+    renderPeople();
+  }));
+  $('#regForm').addEventListener('submit', handleSubmit);
+  $('#confirmClose').addEventListener('click', closeConfirm);
+  $('#confirmBack').addEventListener('click', closeConfirm);
+  $('#confirmSubmit').addEventListener('click', () => { void submitPending(); });
+  $('#confirmModal').addEventListener('click', (event) => { if (event.target === event.currentTarget) closeConfirm(); });
+  window.addEventListener('hashchange', route);
+}
+
+bindEvents();
+route();
+refreshIcons();
+
+  </script>
+</body>
+</html>
