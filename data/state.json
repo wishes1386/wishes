@@ -139,7 +139,12 @@
       "options": [
         "op1"
       ],
-      "submittedAt": "2026-08-03T09:12:00+08:00"
+      "submittedAt": "2026-08-08T12:09:41.361Z",
+      "optionLabels": {
+        "op1": "羽球友誼賽"
+      },
+      "idCard": "A123456789",
+      "birthDate": "1990-05-20"
     },
     {
       "memberNo": "CHT-002",
