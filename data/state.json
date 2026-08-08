@@ -139,12 +139,7 @@
       "options": [
         "op1"
       ],
-      "submittedAt": "2026-08-08T13:51:43.874Z",
-      "optionLabels": {
-        "op1": "羽球友誼賽"
-      },
-      "idCard": "A123456789",
-      "birthDate": "1990-05-20"
+      "submittedAt": "2026-08-03T09:12:00+08:00"
     },
     {
       "memberNo": "CHT-002",
@@ -213,5 +208,6 @@
   "admin": {
     "salt": "f32c399bb01f349bd732104e4c9b8b2e",
     "hash": "2b403c6bdad591b323084a2e497f88bedcc6b74ec94f9159523b1ffc18718090bff40bc35ec1f19fc47414462152e1f37a56c0303f8cf54f3474d942ef5d892d"
-  }
+  },
+  "mode": "roster"
 }

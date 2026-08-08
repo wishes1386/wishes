@@ -120,6 +120,12 @@ function bindEvents() {
   $('#confirmModal').addEventListener('click', (event) => {
     if (event.target === event.currentTarget) closeConfirm();
   });
+  $$('input[name="relationType"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const needGuardian = input.checked && input.value !== 'self';
+      $('#guardianField').classList.toggle('hidden', !needGuardian);
+    });
+  });
 }
 
 async function handleSubmit(event) {
@@ -130,7 +136,11 @@ async function handleSubmit(event) {
   const phone = $('#memberPhone').value.trim();
   const email = $('#memberEmail').value.trim();
   const idCard = $('#memberId').value.trim();
-  const birthDate = $('#memberBirth').value;
+  const birthText = $('#memberBirth').value.trim();
+  const birthDate = birthText ? parseRocDateToIso(birthText) : '';
+  const relationType = ($('input[name="relationType"]:checked') || { value: 'self' }).value;
+  const guardianName = $('#guardianName').value.trim();
+  const guardianPhone = $('#guardianPhone').value.trim();
   const options = $$('#options input:checked').map((input) => input.value);
 
   if (!name) {
@@ -145,9 +155,17 @@ async function handleSubmit(event) {
     showError('身分證字號需為 10 碼（1 個英文字母 + 9 個數字）');
     return;
   }
+  if (birthText && !birthDate) {
+    showError('出生年月日格式不正確，請輸入民國年，例如 113/05/20');
+    return;
+  }
+  if (relationType !== 'self' && !guardianName) {
+    showError('親屬或未滿12歲報名需填寫會員本人姓名');
+    return;
+  }
 
-  const payload = { name, phone, email, idCard, birthDate, options };
-  if (idCard || birthDate) {
+  const payload = { name, phone, email, idCard, birthDate, relationType, guardianName, guardianPhone, options };
+  if (idCard || birthDate || relationType !== 'self') {
     showConfirm(payload);
   } else {
     await submitRegistration(payload);
@@ -186,7 +204,9 @@ function showConfirm(payload) {
     ['姓名', payload.name],
     ['手機', payload.phone || '未填寫'],
     ['身分證', payload.idCard || '未填寫'],
-    ['出生年月日', payload.birthDate || '未填寫'],
+    ['出生年月日（民國）', payload.birthDate ? formatRocDate(payload.birthDate) : '未填寫'],
+    ['報名對象', relationLabel(payload.relationType)],
+    ['會員本人', payload.guardianName || '—'],
     ['參加選項', selectedLabels]
   ];
   rows.forEach(([label, value]) => {
@@ -194,6 +214,12 @@ function showConfirm(payload) {
   });
   $('#confirmModal').classList.remove('hidden');
   refreshIcons();
+}
+
+function relationLabel(relationType) {
+  if (relationType === 'family') return '親屬';
+  if (relationType === 'child') return '未滿12歲';
+  return '會員本人';
 }
 
 function closeConfirm() {
@@ -226,6 +252,8 @@ function showResult(result, submitted) {
   box.append(
     el('div', { class: 'result-head' }, el('i', { 'data-lucide': 'circle-check-big' }), result.updated ? '報名已更新' : '報名成功'),
     el('p', {}, `姓名：${submitted.name}${submitted.phone ? `｜手機：${submitted.phone}` : ''}`),
+    el('p', {}, `報名對象：${relationLabel(submitted.relationType)}${submitted.guardianName ? `｜會員本人：${submitted.guardianName}` : ''}`),
+    el('p', {}, `出生年月日：${submitted.birthDate ? formatRocDate(submitted.birthDate) : '未填寫'}`),
     el('p', {}, `送出時間：${formatDateTime(result.submittedAt)}`),
     el('p', {}, `參加選項：${selectedLabels}`),
     tags

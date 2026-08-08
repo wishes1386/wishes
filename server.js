@@ -485,6 +485,9 @@ async function handleRegister(req, res, body) {
   const email = sanitizeText(body.email, '', 120);
   const idCard = sanitizeText(body.idCard, '', 20);
   const birthDate = sanitizeText(body.birthDate, '', 10);
+  const relationType = ['self', 'family', 'child'].includes(body.relationType) ? body.relationType : 'self';
+  const guardianName = sanitizeText(body.guardianName, '', 80);
+  const guardianPhone = sanitizeText(body.guardianPhone, '', 40);
   if (!name) {
     return sendError(res, 400, '請輸入姓名');
   }
@@ -493,6 +496,16 @@ async function handleRegister(req, res, body) {
   }
   if (birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
     return sendError(res, 400, '出生年月日格式不正確');
+  }
+  if (birthDate) {
+    const [year, month, day] = birthDate.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+      return sendError(res, 400, '出生年月日格式不正確');
+    }
+  }
+  if (relationType !== 'self' && !guardianName) {
+    return sendError(res, 400, '親屬或未滿12歲報名需填寫會員本人姓名');
   }
 
   const options = Array.isArray(body.options)
@@ -512,39 +525,104 @@ async function handleRegister(req, res, body) {
   const result = await mutate(() => {
     const members = state.members;
     let member = null;
+    let guardian = null;
 
-    if (state.mode === 'roster') {
-      const nameMatches = members.filter(
-        (m) => m.name && normalizeKey(m.name) === normalizeKey(name)
-      );
-      if (nameMatches.length === 0) {
-        throw httpError(404, '此姓名不在名冊中');
-      }
-      if (nameMatches.length === 1) {
-        member = nameMatches[0];
-      } else {
-        const phoneMatches = nameMatches.filter(
-          (m) => m.phone && normalizePhone(m.phone) === normalizePhone(phone)
+    if (relationType === 'self') {
+      if (state.mode === 'roster') {
+        const nameMatches = members.filter(
+          (m) => m.name && normalizeKey(m.name) === normalizeKey(name)
         );
-        if (phoneMatches.length === 1) {
-          member = phoneMatches[0];
+        if (nameMatches.length === 0) {
+          throw httpError(404, '此姓名不在名冊中');
+        }
+        if (nameMatches.length === 1) {
+          member = nameMatches[0];
         } else {
-          throw httpError(400, '名冊中有同名會員，請輸入正確的手機號碼');
+          const phoneMatches = nameMatches.filter(
+            (m) => m.phone && normalizePhone(m.phone) === normalizePhone(phone)
+          );
+          if (phoneMatches.length === 1) {
+            member = phoneMatches[0];
+          } else {
+            throw httpError(400, '名冊中有同名會員，請輸入正確的手機號碼');
+          }
+        }
+      } else {
+        member = { memberNo: '', name, phone, email, idCard, birthDate, department: '' };
+        const existingManual = members.find(
+          (m) =>
+            m.memberNo.startsWith('M-') &&
+            normalizeKey(m.name) === normalizeKey(name) &&
+            (!phone || (m.phone && normalizePhone(m.phone) === normalizePhone(phone)))
+        );
+        if (existingManual) {
+          Object.assign(existingManual, member);
+          member = existingManual;
+        } else {
+          member.memberNo = `M-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+          state.members.push(member);
         }
       }
     } else {
-      member = { memberNo: '', name, phone, email, idCard, birthDate, department: '' };
-      const existingManual = members.find(
+      const guardianCandidates = members.filter(
+        (m) => m.name && normalizeKey(m.name) === normalizeKey(guardianName)
+      );
+      if (state.mode === 'roster') {
+        if (guardianCandidates.length === 0) {
+          throw httpError(404, '找不到會員本人，請確認姓名');
+        }
+      } else {
+        const selfKeys = new Set(
+          state.registrations
+            .filter((r) => !r.relationType || r.relationType === 'self')
+            .map((r) => normalizeKey(r.memberNo))
+        );
+        const registeredCandidates = guardianCandidates.filter((m) => selfKeys.has(normalizeKey(m.memberNo)));
+        if (registeredCandidates.length === 0) {
+          throw httpError(403, '會員本人尚未完成報名，請先由會員本人報名');
+        }
+        guardianCandidates.length = 0;
+        registeredCandidates.forEach((m) => guardianCandidates.push(m));
+      }
+
+      if (guardianCandidates.length === 1) {
+        guardian = guardianCandidates[0];
+      } else {
+        const phoneMatches = guardianCandidates.filter(
+          (m) => m.phone && normalizePhone(m.phone) === normalizePhone(guardianPhone)
+        );
+        if (phoneMatches.length === 1) {
+          guardian = phoneMatches[0];
+        } else {
+          throw httpError(400, '名冊中有同名會員，請輸入正確的會員本人手機號碼');
+        }
+      }
+
+      const guardianRegistered = state.registrations.some(
+        (r) => normalizeKey(r.memberNo) === normalizeKey(guardian.memberNo) && (!r.relationType || r.relationType === 'self')
+      );
+      if (!guardianRegistered) {
+        throw httpError(403, '會員本人尚未完成報名，請先由會員本人報名');
+      }
+
+      member = members.find(
         (m) =>
-          m.memberNo.startsWith('M-') &&
+          m.memberNo.startsWith('D-') &&
           normalizeKey(m.name) === normalizeKey(name) &&
           (!phone || (m.phone && normalizePhone(m.phone) === normalizePhone(phone)))
       );
-      if (existingManual) {
-        Object.assign(existingManual, member);
-        member = existingManual;
+      if (member) {
+        Object.assign(member, { name, phone, email, idCard, birthDate });
       } else {
-        member.memberNo = `M-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        member = {
+          memberNo: `D-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          name,
+          phone,
+          email,
+          idCard,
+          birthDate,
+          department: ''
+        };
         state.members.push(member);
       }
     }
@@ -556,6 +634,11 @@ async function handleRegister(req, res, body) {
     }
 
     const now = new Date().toISOString();
+    const registrationFields = {
+      relationType,
+      guardianMemberNo: relationType === 'self' ? '' : guardian.memberNo,
+      guardianName: relationType === 'self' ? '' : guardian.name
+    };
     const existingRegistration = state.registrations.find(
       (r) => normalizeKey(r.memberNo) === normalizeKey(member.memberNo)
     );
@@ -564,6 +647,9 @@ async function handleRegister(req, res, body) {
       existingRegistration.optionLabels = optionLabels;
       existingRegistration.idCard = idCard;
       existingRegistration.birthDate = birthDate;
+      existingRegistration.relationType = registrationFields.relationType;
+      existingRegistration.guardianMemberNo = registrationFields.guardianMemberNo;
+      existingRegistration.guardianName = registrationFields.guardianName;
       existingRegistration.submittedAt = now;
       return { ok: true, updated: true, submittedAt: now };
     }
@@ -574,6 +660,9 @@ async function handleRegister(req, res, body) {
       optionLabels,
       idCard,
       birthDate,
+      relationType: registrationFields.relationType,
+      guardianMemberNo: registrationFields.guardianMemberNo,
+      guardianName: registrationFields.guardianName,
       submittedAt: now
     });
     return { ok: true, updated: false, submittedAt: now };

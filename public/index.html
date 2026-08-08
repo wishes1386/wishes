@@ -73,11 +73,31 @@
             <input id="memberId" name="idCard" maxlength="10" placeholder="例 A123456789">
           </label>
           <label class="field">
-            <span>出生年月日（選填）</span>
-            <input id="memberBirth" name="birthDate" type="date">
+            <span>出生年月日（民國，選填）</span>
+            <input id="memberBirth" name="birthDate" inputmode="numeric" placeholder="例：113/05/20">
           </label>
         </div>
         <p class="field-note"><i data-lucide="info"></i><span>活動如有保險時需填寫正確</span></p>
+
+        <div class="relation-group">
+          <p class="relation-title">報名對象</p>
+          <div class="relation-options">
+            <label class="relation-option"><input type="radio" name="relationType" value="self" checked><span>會員本人</span></label>
+            <label class="relation-option"><input type="radio" name="relationType" value="family"><span>親屬</span></label>
+            <label class="relation-option"><input type="radio" name="relationType" value="child"><span>未滿12歲</span></label>
+          </div>
+          <div id="guardianField" class="guardian-field hidden">
+            <label class="field">
+              <span>會員本人姓名</span>
+              <input id="guardianName" placeholder="請填寫會員本人姓名">
+            </label>
+            <label class="field">
+              <span>會員本人手機（同名時填寫）</span>
+              <input id="guardianPhone" type="tel" placeholder="例 0912-345-678">
+            </label>
+            <p class="field-note relation-note"><i data-lucide="info"></i><span>親屬或未滿12歲報名需會員本人已完成報名</span></p>
+          </div>
+        </div>
 
         <div id="manualFields" class="identity-grid hidden">
           <label class="field">

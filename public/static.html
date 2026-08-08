@@ -589,6 +589,62 @@ button {
   flex: 0 0 16px;
 }
 
+.relation-group {
+  margin-bottom: 18px;
+}
+
+.relation-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.relation-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.relation-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.relation-option:has(input:checked) {
+  border-color: var(--coral);
+  background: #eaf1fa;
+}
+
+.relation-option input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--coral);
+}
+
+.guardian-field {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fafcff;
+}
+
+.guardian-field .relation-note {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .confirm-summary {
   display: flex;
   flex-direction: column;
@@ -744,6 +800,10 @@ button {
   }
 
   .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guardian-field {
     grid-template-columns: 1fr;
   }
 
@@ -1897,11 +1957,31 @@ button {
               <input id="memberId" name="idCard" maxlength="10" placeholder="例 A123456789">
             </label>
             <label class="field">
-              <span>出生年月日（選填）</span>
-              <input id="memberBirth" name="birthDate" type="date">
+              <span>出生年月日（民國，選填）</span>
+              <input id="memberBirth" name="birthDate" inputmode="numeric" placeholder="例：113/05/20">
             </label>
           </div>
           <p class="field-note"><i data-lucide="info"></i><span>活動如有保險時需填寫正確</span></p>
+
+          <div class="relation-group">
+            <p class="relation-title">報名對象</p>
+            <div class="relation-options">
+              <label class="relation-option"><input type="radio" name="relationType" value="self" checked><span>會員本人</span></label>
+              <label class="relation-option"><input type="radio" name="relationType" value="family"><span>親屬</span></label>
+              <label class="relation-option"><input type="radio" name="relationType" value="child"><span>未滿12歲</span></label>
+            </div>
+            <div id="guardianField" class="guardian-field hidden">
+              <label class="field">
+                <span>會員本人姓名</span>
+                <input id="guardianName" placeholder="請填寫會員本人姓名">
+              </label>
+              <label class="field">
+                <span>會員本人手機（同名時填寫）</span>
+                <input id="guardianPhone" type="tel" placeholder="例 0912-345-678">
+              </label>
+              <p class="field-note relation-note"><i data-lucide="info"></i><span>親屬或未滿12歲報名需會員本人已完成報名</span></p>
+            </div>
+          </div>
 
           <div id="manualFields" class="identity-grid hidden">
             <label class="field">
@@ -4666,6 +4746,34 @@ function toTimeOnly(value) {
   return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
+function parseRocDateToIso(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  const match = text.match(/^(\d{2,3})\s*[年/\-.]\s*(\d{1,2})\s*[月/\-.]\s*(\d{1,2})\s*日?$/);
+  if (!match) return '';
+  const year = Number(match[1]) + 1911;
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${year}-${pad(month)}-${pad(day)}`;
+}
+
+function formatRocDate(value) {
+  if (!value) return '';
+  const match = String(value).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return String(value);
+  const year = Number(match[1]) - 1911;
+  return `民國${year}年${match[2]}月${match[3]}日`;
+}
+
+function relationLabel(relationType) {
+  if (relationType === 'family') return '親屬';
+  if (relationType === 'child') return '未滿12歲';
+  return '會員本人';
+}
+
 function csvCell(value) {
   const text = String(value == null ? '' : value);
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
@@ -4800,7 +4908,7 @@ function showConfirm(payload) {
   const summary = $('#confirmSummary');
   summary.innerHTML = '';
   const labels = payload.options.map((id) => optionLabel(id)).join('、');
-  [['姓名', payload.name], ['手機', payload.phone || '未填寫'], ['身分證', payload.idCard || '未填寫'], ['出生年月日', payload.birthDate || '未填寫'], ['參加選項', labels]]
+  [['姓名', payload.name], ['手機', payload.phone || '未填寫'], ['身分證', payload.idCard || '未填寫'], ['出生年月日（民國）', payload.birthDate ? formatRocDate(payload.birthDate) : '未填寫'], ['報名對象', relationLabel(payload.relationType)], ['會員本人', payload.guardianName || '—'], ['參加選項', labels]]
     .forEach(([label, value]) => summary.append(el('div', { class: 'confirm-row' }, el('span', {}, label), el('strong', {}, value))));
   $('#confirmModal').classList.remove('hidden');
   refreshIcons();
@@ -4817,21 +4925,60 @@ async function submitRegistration(payload) {
   if (config.deadline && Date.parse(config.deadline) <= Date.now()) return showError('報名已截止，無法再送出');
 
   let member = null;
+  const relationType = payload.relationType || 'self';
   const members = state.members;
-  if (state.mode === 'roster') {
-    const nameMatches = members.filter((m) => m.name && normalizeKey(m.name) === normalizeKey(payload.name));
-    if (nameMatches.length === 0) return showError('此姓名不在名冊中');
-    if (nameMatches.length === 1) member = nameMatches[0];
-    else {
-      const phoneMatches = nameMatches.filter((m) => m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone));
-      if (phoneMatches.length === 1) member = phoneMatches[0];
-      else return showError('名冊中有同名會員，請輸入正確的手機號碼');
+  if (relationType === 'self') {
+    if (state.mode === 'roster') {
+      const nameMatches = members.filter((m) => m.name && normalizeKey(m.name) === normalizeKey(payload.name));
+      if (nameMatches.length === 0) return showError('此姓名不在名冊中');
+      if (nameMatches.length === 1) member = nameMatches[0];
+      else {
+        const phoneMatches = nameMatches.filter((m) => m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone));
+        if (phoneMatches.length === 1) member = phoneMatches[0];
+        else return showError('名冊中有同名會員，請輸入正確的手機號碼');
+      }
+    } else {
+      member = { memberNo: '', name: payload.name, phone: payload.phone, email: payload.email, idCard: payload.idCard, birthDate: payload.birthDate, department: '' };
+      const existing = members.find((m) => m.memberNo.startsWith('M-') && normalizeKey(m.name) === normalizeKey(payload.name) && (!payload.phone || (m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone))));
+      if (existing) { Object.assign(existing, member); member = existing; }
+      else { member.memberNo = `M-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`; members.push(member); }
     }
   } else {
-    member = { memberNo: '', name: payload.name, phone: payload.phone, email: payload.email, idCard: payload.idCard, birthDate: payload.birthDate, department: '' };
-    const existing = members.find((m) => m.memberNo.startsWith('M-') && normalizeKey(m.name) === normalizeKey(payload.name) && (!payload.phone || (m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone))));
-    if (existing) { Object.assign(existing, member); member = existing; }
-    else { member.memberNo = `M-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`; members.push(member); }
+    const guardianCandidates = members.filter((m) => m.name && normalizeKey(m.name) === normalizeKey(payload.guardianName));
+    if (state.mode === 'roster') {
+      if (guardianCandidates.length === 0) return showError('找不到會員本人，請確認姓名');
+    } else {
+      const selfKeys = new Set(state.registrations.filter((r) => !r.relationType || r.relationType === 'self').map((r) => normalizeKey(r.memberNo)));
+      const registeredCandidates = guardianCandidates.filter((m) => selfKeys.has(normalizeKey(m.memberNo)));
+      if (registeredCandidates.length === 0) return showError('會員本人尚未完成報名，請先由會員本人報名');
+      guardianCandidates.length = 0;
+      registeredCandidates.forEach((m) => guardianCandidates.push(m));
+    }
+
+    let guardian = null;
+    if (guardianCandidates.length === 1) {
+      guardian = guardianCandidates[0];
+    } else {
+      const phoneMatches = guardianCandidates.filter((m) => m.phone && normalizePhone(m.phone) === normalizePhone(payload.guardianPhone));
+      if (phoneMatches.length === 1) guardian = phoneMatches[0];
+      else return showError('名冊中有同名會員，請輸入正確的會員本人手機號碼');
+    }
+
+    const guardianRegistered = state.registrations.some(
+      (r) => normalizeKey(r.memberNo) === normalizeKey(guardian.memberNo) && (!r.relationType || r.relationType === 'self')
+    );
+    if (!guardianRegistered) return showError('會員本人尚未完成報名，請先由會員本人報名');
+
+    member = members.find(
+      (m) => m.memberNo.startsWith('D-') && normalizeKey(m.name) === normalizeKey(payload.name) && (!payload.phone || (m.phone && normalizePhone(m.phone) === normalizePhone(payload.phone)))
+    );
+    if (member) {
+      Object.assign(member, { name: payload.name, phone: payload.phone, email: payload.email, idCard: payload.idCard, birthDate: payload.birthDate });
+    } else {
+      member = { memberNo: `D-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, name: payload.name, phone: payload.phone, email: payload.email, idCard: payload.idCard, birthDate: payload.birthDate, department: '' };
+      members.push(member);
+    }
+    payload._guardian = guardian;
   }
 
   const optionLabels = {};
@@ -4843,10 +4990,24 @@ async function submitRegistration(payload) {
     existingReg.optionLabels = optionLabels;
     existingReg.idCard = payload.idCard;
     existingReg.birthDate = payload.birthDate;
+    existingReg.relationType = relationType;
+    existingReg.guardianMemberNo = relationType === 'self' ? '' : payload._guardian.memberNo;
+    existingReg.guardianName = relationType === 'self' ? '' : payload._guardian.name;
     existingReg.submittedAt = now;
   } else {
-    state.registrations.push({ memberNo: member.memberNo, options: payload.options, optionLabels, idCard: payload.idCard, birthDate: payload.birthDate, submittedAt: now });
+    state.registrations.push({
+      memberNo: member.memberNo,
+      options: payload.options,
+      optionLabels,
+      idCard: payload.idCard,
+      birthDate: payload.birthDate,
+      relationType,
+      guardianMemberNo: relationType === 'self' ? '' : payload._guardian.memberNo,
+      guardianName: relationType === 'self' ? '' : payload._guardian.name,
+      submittedAt: now
+    });
   }
+  delete payload._guardian;
   saveState();
   showResult(existingReg ? '報名已更新' : '報名成功', payload, now);
 }
@@ -4861,6 +5022,8 @@ function showResult(title, payload, submittedAt) {
   box.append(
     el('div', { class: 'result-head' }, el('i', { 'data-lucide': 'circle-check-big' }), title),
     el('p', {}, `姓名：${payload.name}${payload.phone ? `｜手機：${payload.phone}` : ''}`),
+    el('p', {}, `報名對象：${relationLabel(payload.relationType)}${payload.guardianName ? `｜會員本人：${payload.guardianName}` : ''}`),
+    el('p', {}, `出生年月日：${payload.birthDate ? formatRocDate(payload.birthDate) : '未填寫'}`),
     el('p', {}, `送出時間：${formatDateTime(submittedAt)}`),
     el('p', {}, `參加選項：${labels}`),
     tags
@@ -4883,14 +5046,20 @@ async function handleSubmit(event) {
   const phone = $('#memberPhone').value.trim();
   const email = $('#memberEmail').value.trim();
   const idCard = $('#memberId').value.trim();
-  const birthDate = $('#memberBirth').value;
+  const birthText = $('#memberBirth').value.trim();
+  const birthDate = birthText ? parseRocDateToIso(birthText) : '';
+  const relationType = ($('input[name="relationType"]:checked') || { value: 'self' }).value;
+  const guardianName = $('#guardianName').value.trim();
+  const guardianPhone = $('#guardianPhone').value.trim();
   const options = $$('#options input:checked').map((input) => input.value);
   if (!name) return showError('請輸入姓名');
   if (options.length === 0) return showError('請選擇一個參加選項');
   if (options.length > 1) return showError('報名選項僅能選擇一項');
   if (idCard && !/^[A-Za-z][0-9]{9}$/.test(idCard)) return showError('身分證字號需為 10 碼（1 個英文字母 + 9 個數字）');
-  const payload = { name, phone, email, idCard, birthDate, options };
-  if (idCard || birthDate) showConfirm(payload);
+  if (birthText && !birthDate) return showError('出生年月日格式不正確，請輸入民國年，例如 113/05/20');
+  if (relationType !== 'self' && !guardianName) return showError('親屬或未滿12歲報名需填寫會員本人姓名');
+  const payload = { name, phone, email, idCard, birthDate, relationType, guardianName, guardianPhone, options };
+  if (idCard || birthDate || relationType !== 'self') showConfirm(payload);
   else await submitRegistration(payload);
 }
 
@@ -5001,7 +5170,7 @@ function renderPeople() {
   let rows;
   let headers;
   if (peopleMode === 'registered') {
-    headers = ['會員編號', '姓名', '部門', '手機', '身分證', '出生年月日', '參加選項', '報名時間'];
+    headers = ['會員編號', '姓名', '部門', '手機', '報名對象', '會員本人', '身分證', '出生年月日(民國)', '參加選項', '報名時間'];
     rows = filter(registered).slice().sort((a, b) => new Date(b.reg.submittedAt) - new Date(a.reg.submittedAt));
   } else {
     headers = ['會員編號', '姓名', '部門', '手機', 'Email'];
@@ -5016,7 +5185,18 @@ function renderPeople() {
     if (peopleMode === 'registered') {
       const chips = el('div', { class: 'member-list' });
       (item.reg.options || []).forEach((id) => chips.append(el('span', { class: 'member-chip' }, optionLabel(id))));
-      tr.append(el('td', {}, item.memberNo), el('td', {}, el('strong', {}, item.name || '—')), el('td', {}, item.department || '—'), el('td', {}, item.phone || '—'), el('td', {}, item.reg.idCard || '—'), el('td', {}, item.reg.birthDate ? toDateOnly(item.reg.birthDate) : '—'), el('td', {}, chips), el('td', {}, formatDateTime(item.reg.submittedAt)));
+      tr.append(
+        el('td', {}, item.memberNo),
+        el('td', {}, el('strong', {}, item.name || '—')),
+        el('td', {}, item.department || '—'),
+        el('td', {}, item.phone || '—'),
+        el('td', {}, relationLabel(item.reg.relationType)),
+        el('td', {}, item.reg.guardianName ? `${item.reg.guardianName}（${item.reg.guardianMemberNo}）` : '—'),
+        el('td', {}, item.reg.idCard || '—'),
+        el('td', {}, item.reg.birthDate ? formatRocDate(item.reg.birthDate) : '—'),
+        el('td', {}, chips),
+        el('td', {}, formatDateTime(item.reg.submittedAt))
+      );
     } else {
       tr.append(el('td', {}, item.memberNo), el('td', {}, el('strong', {}, item.name || '—')), el('td', {}, item.department || '—'), el('td', {}, item.phone || '—'), el('td', {}, item.email || '—'));
     }
@@ -5055,6 +5235,19 @@ function renderDataCheck() {
     regKeys.add(key);
     if (reg.idCard && !/^[A-Za-z][0-9]{9}$/.test(reg.idCard)) issues.push({ title: '身分證字號不是 10 碼', item: `${reg.memberNo}：${reg.idCard}` });
     if (reg.birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate)) issues.push({ title: '出生年月日格式異常', item: `${reg.memberNo}：${reg.birthDate}` });
+    const relationType = reg.relationType || 'self';
+    if (relationType !== 'self') {
+      if (!reg.guardianMemberNo || !memberKeys.has(normalizeKey(reg.guardianMemberNo))) {
+        issues.push({ title: '親屬/未滿12歲找不到會員本人', item: `${reg.memberNo}：${reg.name || ''}` });
+      } else {
+        const guardianRegistered = regs.some(
+          (r) => normalizeKey(r.memberNo) === normalizeKey(reg.guardianMemberNo) && (!r.relationType || r.relationType === 'self')
+        );
+        if (!guardianRegistered) {
+          issues.push({ title: '會員本人尚未報名', item: `${reg.guardianName || reg.guardianMemberNo} 的 ${reg.name || reg.memberNo}` });
+        }
+      }
+    }
     const stale = (reg.options || []).filter((id) => !configIds.has(id));
     if (stale.length) issues.push({ title: '報名選項已被刪除', item: `${reg.memberNo}：${stale.join('、')}` });
   });
@@ -5325,12 +5518,24 @@ function exportPeopleCsv() {
   const regByMember = new Map(regs.map((reg) => [normalizeKey(reg.memberNo), reg]));
   const members = state.members || [];
   const list = peopleMode === 'registered' ? members.filter((m) => regByMember.has(normalizeKey(m.memberNo))) : members.filter((m) => !regByMember.has(normalizeKey(m.memberNo)));
-  const headers = peopleMode === 'registered' ? ['會員編號', '姓名', '部門', '手機', 'Email', '身分證', '出生年月日', '參加選項', '報名時間'] : ['會員編號', '姓名', '部門', '手機', 'Email'];
+  const headers = peopleMode === 'registered' ? ['會員編號', '姓名', '部門', '手機', 'Email', '報名對象', '會員本人', '身分證', '出生年月日(民國)', '參加選項', '報名時間'] : ['會員編號', '姓名', '部門', '手機', 'Email'];
   const rows = [headers];
   list.forEach((member) => {
     if (peopleMode === 'registered') {
       const reg = regByMember.get(normalizeKey(member.memberNo));
-      rows.push([member.memberNo, member.name, member.department, member.phone, member.email, reg.idCard || '', reg.birthDate ? toDateOnly(reg.birthDate) : '', (reg.options || []).map((id) => optionLabel(id)).join('、'), formatDateTime(reg.submittedAt)]);
+      rows.push([
+        member.memberNo,
+        member.name,
+        member.department,
+        member.phone,
+        member.email,
+        relationLabel(reg.relationType),
+        reg.guardianName ? `${reg.guardianName}（${reg.guardianMemberNo}）` : '',
+        reg.idCard || '',
+        reg.birthDate ? formatRocDate(reg.birthDate) : '',
+        (reg.options || []).map((id) => optionLabel(id)).join('、'),
+        formatDateTime(reg.submittedAt)
+      ]);
     } else rows.push([member.memberNo, member.name, member.department, member.phone, member.email]);
   });
   downloadCsv(peopleMode === 'registered' ? '已報名人員清冊.csv' : '未報名人員清冊.csv', rows.map((row) => row.map(csvCell).join(',')).join('\n'));
@@ -5419,6 +5624,12 @@ function bindEvents() {
   $('#confirmBack').addEventListener('click', closeConfirm);
   $('#confirmSubmit').addEventListener('click', () => { void submitPending(); });
   $('#confirmModal').addEventListener('click', (event) => { if (event.target === event.currentTarget) closeConfirm(); });
+  $$('input[name="relationType"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const needGuardian = input.checked && input.value !== 'self';
+      $('#guardianField').classList.toggle('hidden', !needGuardian);
+    });
+  });
   window.addEventListener('hashchange', route);
 }
 

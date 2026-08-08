@@ -46,6 +46,12 @@ function registrationOptions(reg) {
   return (reg.options || []).map((id) => optionLabel(id)).join('、') || '無';
 }
 
+function relationLabel(relationType) {
+  if (relationType === 'family') return '親屬';
+  if (relationType === 'child') return '未滿12歲';
+  return '會員本人';
+}
+
 async function initAdmin() {
   bindStaticEvents();
   try {
@@ -386,7 +392,7 @@ function renderPeople() {
   let rows;
   let headers;
   if (peopleMode === 'registered') {
-    headers = ['會員編號', '姓名', '部門', '手機', '身分證', '出生年月日', '參加選項', '報名時間'];
+    headers = ['會員編號', '姓名', '部門', '手機', '報名對象', '會員本人', '身分證', '出生年月日(民國)', '參加選項', '報名時間'];
     rows = filter(registered).slice().sort((a, b) => new Date(b.reg.submittedAt) - new Date(a.reg.submittedAt));
   } else {
     headers = ['會員編號', '姓名', '部門', '手機', 'Email'];
@@ -412,8 +418,10 @@ function renderPeople() {
           el('td', {}, el('strong', {}, item.name || '—')),
           el('td', {}, item.department || '—'),
           el('td', {}, item.phone || '—'),
+          el('td', {}, relationLabel(item.reg.relationType)),
+          el('td', {}, item.reg.guardianName ? `${item.reg.guardianName}（${item.reg.guardianMemberNo}）` : '—'),
           el('td', {}, item.reg.idCard || '—'),
-          el('td', {}, item.reg.birthDate ? toDateOnly(item.reg.birthDate) : '—'),
+          el('td', {}, item.reg.birthDate ? formatRocDate(item.reg.birthDate) : '—'),
           el('td', {}, chips),
           el('td', {}, formatDateTime(item.reg.submittedAt))
         );
@@ -484,6 +492,19 @@ function renderDataCheck() {
     }
     if (reg.birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(reg.birthDate)) {
       issues.push({ title: '出生年月日格式異常', item: `${reg.memberNo}：${reg.birthDate}` });
+    }
+    const relationType = reg.relationType || 'self';
+    if (relationType !== 'self') {
+      if (!reg.guardianMemberNo || !memberKeys.has(normalizeKey(reg.guardianMemberNo))) {
+        issues.push({ title: '親屬/未滿12歲找不到會員本人', item: `${reg.memberNo}：${reg.name || ''}` });
+      } else {
+        const guardianRegistered = regs.some(
+          (r) => normalizeKey(r.memberNo) === normalizeKey(reg.guardianMemberNo) && (!r.relationType || r.relationType === 'self')
+        );
+        if (!guardianRegistered) {
+          issues.push({ title: '會員本人尚未報名', item: `${reg.guardianName || reg.guardianMemberNo} 的 ${reg.name || reg.memberNo}` });
+        }
+      }
     }
     const stale = (reg.options || []).filter((id) => !configIds.has(id));
     if (stale.length > 0) {
@@ -786,7 +807,7 @@ function exportPeopleCsv() {
     : members.filter((m) => !regByMember.has(normalizeKey(m.memberNo)));
 
   const headers = peopleMode === 'registered'
-    ? ['會員編號', '姓名', '部門', '手機', 'Email', '身分證', '出生年月日', '參加選項', '報名時間']
+    ? ['會員編號', '姓名', '部門', '手機', 'Email', '報名對象', '會員本人', '身分證', '出生年月日(民國)', '參加選項', '報名時間']
     : ['會員編號', '姓名', '部門', '手機', 'Email'];
   const rows = [headers];
   list.forEach((member) => {
@@ -798,8 +819,10 @@ function exportPeopleCsv() {
         member.department,
         member.phone,
         member.email,
+        relationLabel(reg.relationType),
+        reg.guardianName ? `${reg.guardianName}（${reg.guardianMemberNo}）` : '',
         reg.idCard || '',
-        reg.birthDate ? toDateOnly(reg.birthDate) : '',
+        reg.birthDate ? formatRocDate(reg.birthDate) : '',
         registrationOptions(reg),
         formatDateTime(reg.submittedAt)
       ]);
