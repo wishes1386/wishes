@@ -1,0 +1,212 @@
+{
+  "config": {
+    "siteTitle": "中華電信會員活動報名",
+    "eventTitle": "2026 會員盛夏交流會",
+    "description": "邀請會員一起參加年度盛夏交流，請選擇您想參加的一項活動。",
+    "startAt": "2026-08-01T09:00",
+    "deadline": "2026-08-20T17:30",
+    "open": true,
+    "options": [
+      {
+        "id": "op1",
+        "label": "羽球友誼賽",
+        "desc": "08:30-12:00｜桃園巨蛋",
+        "color": "#003d79"
+      },
+      {
+        "id": "op2",
+        "label": "親子野餐趣",
+        "desc": "10:00-15:00｜大安森林公園",
+        "color": "#f26522"
+      },
+      {
+        "id": "op3",
+        "label": "企業參訪",
+        "desc": "09:00-12:00｜中華電信學院",
+        "color": "#1f6fb2"
+      },
+      {
+        "id": "op4",
+        "label": "不克參加",
+        "desc": "今年無法到場，仍可完成報名程序",
+        "color": "#7a8ba3"
+      }
+    ]
+  },
+  "members": [
+    {
+      "memberNo": "CHT-001",
+      "name": "王小明",
+      "phone": "0912-345-001",
+      "department": "行動通信分公司",
+      "email": "wang.xm@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-002",
+      "name": "林怡君",
+      "phone": "0912-345-002",
+      "department": "企業客戶分公司",
+      "email": "lin.yj@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-003",
+      "name": "陳志豪",
+      "phone": "0912-345-003",
+      "department": "資訊技術分公司",
+      "email": "chen.zh@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-004",
+      "name": "張雅婷",
+      "phone": "0912-345-004",
+      "department": "數據通信分公司",
+      "email": "zhang.yt@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-005",
+      "name": "李建宏",
+      "phone": "0912-345-005",
+      "department": "北區分公司",
+      "email": "li.jh@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-006",
+      "name": "黃佩珊",
+      "phone": "0912-345-006",
+      "department": "中區分公司",
+      "email": "huang.ps@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-007",
+      "name": "劉冠廷",
+      "phone": "0912-345-007",
+      "department": "南區分公司",
+      "email": "liu.gt@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-008",
+      "name": "吳欣怡",
+      "phone": "0912-345-008",
+      "department": "國際電信分公司",
+      "email": "wu.xy@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-009",
+      "name": "蔡孟哲",
+      "phone": "0912-345-009",
+      "department": "中華電信研究院",
+      "email": "cai.mz@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-010",
+      "name": "許芳儀",
+      "phone": "0912-345-010",
+      "department": "客服中心",
+      "email": "xu.fy@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-011",
+      "name": "謝承翰",
+      "phone": "0912-345-011",
+      "department": "行動通信分公司",
+      "email": "xie.ch@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-012",
+      "name": "邱姿婷",
+      "phone": "0912-345-012",
+      "department": "資訊技術分公司",
+      "email": "qiu.zt@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-013",
+      "name": "羅文豪",
+      "phone": "0912-345-013",
+      "department": "企業客戶分公司",
+      "email": "luo.wh@cht.com.tw"
+    },
+    {
+      "memberNo": "CHT-014",
+      "name": "曾雅雯",
+      "phone": "0912-345-014",
+      "department": "數據通信分公司",
+      "email": "zeng.yw@cht.com.tw"
+    }
+  ],
+  "registrations": [
+    {
+      "memberNo": "CHT-001",
+      "options": [
+        "op1"
+      ],
+      "submittedAt": "2026-08-03T09:12:00+08:00"
+    },
+    {
+      "memberNo": "CHT-002",
+      "options": [
+        "op1"
+      ],
+      "submittedAt": "2026-08-03T10:40:00+08:00"
+    },
+    {
+      "memberNo": "CHT-003",
+      "options": [
+        "op2"
+      ],
+      "submittedAt": "2026-08-03T14:05:00+08:00"
+    },
+    {
+      "memberNo": "CHT-004",
+      "options": [
+        "op3"
+      ],
+      "submittedAt": "2026-08-04T08:30:00+08:00"
+    },
+    {
+      "memberNo": "CHT-005",
+      "options": [
+        "op1"
+      ],
+      "submittedAt": "2026-08-04T11:20:00+08:00"
+    },
+    {
+      "memberNo": "CHT-006",
+      "options": [
+        "op4"
+      ],
+      "submittedAt": "2026-08-04T16:45:00+08:00"
+    },
+    {
+      "memberNo": "CHT-007",
+      "options": [
+        "op2"
+      ],
+      "submittedAt": "2026-08-05T09:05:00+08:00"
+    },
+    {
+      "memberNo": "CHT-008",
+      "options": [
+        "op1"
+      ],
+      "submittedAt": "2026-08-05T10:18:00+08:00"
+    },
+    {
+      "memberNo": "CHT-009",
+      "options": [
+        "op3"
+      ],
+      "submittedAt": "2026-08-05T13:37:00+08:00"
+    },
+    {
+      "memberNo": "CHT-010",
+      "options": [
+        "op2"
+      ],
+      "submittedAt": "2026-08-05T15:52:00+08:00"
+    }
+  ],
+  "admin": {
+    "salt": "f32c399bb01f349bd732104e4c9b8b2e",
+    "hash": "2b403c6bdad591b323084a2e497f88bedcc6b74ec94f9159523b1ffc18718090bff40bc35ec1f19fc47414462152e1f37a56c0303f8cf54f3474d942ef5d892d"
+  }
+}
