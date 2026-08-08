@@ -55,6 +55,7 @@ function defaultConfig() {
 
 function defaultState() {
   return {
+    mode: 'roster',
     config: defaultConfig(),
     members: SAMPLE_MEMBERS.map((m) => ({ ...m })),
     registrations: SAMPLE_REGISTRATIONS.map((r) => ({ ...r }))
@@ -65,6 +66,9 @@ function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (parsed && parsed.config && Array.isArray(parsed.config.options)) {
+      if (typeof parsed.mode !== 'string') {
+        parsed.mode = (parsed.members || []).length > 0 ? 'roster' : 'manual';
+      }
       return parsed;
     }
   } catch {}
@@ -251,7 +255,7 @@ function renderPublic() {
   statusText.textContent = statusLabel;
   statusChip.classList.add(statusLabel === '報名進行中' ? 'status-live' : statusLabel === '報名尚未開始' ? 'status-wait' : statusLabel === '報名已截止' ? 'status-ended' : 'status-closed');
 
-  $('#manualFields').classList.toggle('hidden', state.members.length > 0);
+  $('#manualFields').classList.toggle('hidden', state.mode === 'roster');
 
   const grid = $('#options');
   grid.innerHTML = '';
@@ -292,7 +296,7 @@ async function submitRegistration(payload) {
 
   let member = null;
   const members = state.members;
-  if (members.length > 0) {
+  if (state.mode === 'roster') {
     const nameMatches = members.filter((m) => m.name && normalizeKey(m.name) === normalizeKey(payload.name));
     if (nameMatches.length === 0) return showError('此姓名不在名冊中');
     if (nameMatches.length === 1) member = nameMatches[0];
@@ -760,6 +764,7 @@ function doImport() {
       else { state.members.push(member); added += 1; }
     });
   }
+  state.mode = 'roster';
   saveState();
   toast(`匯入完成：新增 ${added} 筆、更新 ${updated} 筆、略過 ${skipped} 筆`);
   renderAll();
@@ -770,7 +775,9 @@ function resetData(mode) {
   const label = mode === 'empty' ? '清空全部資料' : '重置範例資料';
   const message = mode === 'empty' ? '確定要清空名冊與全部報名資料嗎？此動作無法復原。' : '確定要重置為範例資料嗎？目前名冊與報名資料會被取代。';
   if (!window.confirm(message)) return;
-  state = mode === 'empty' ? { config: defaultConfig(), members: [], registrations: [] } : defaultState();
+  state = mode === 'empty'
+    ? { mode: 'manual', config: defaultConfig(), members: [], registrations: [] }
+    : defaultState();
   saveState();
   toast(`${label}完成`);
   renderAll();

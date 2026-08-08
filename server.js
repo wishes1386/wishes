@@ -78,6 +78,7 @@ function defaultConfig() {
 
 function defaultState() {
   return {
+    mode: 'roster',
     config: defaultConfig(),
     members: SAMPLE_MEMBERS.map((m) => ({ ...m })),
     registrations: SAMPLE_REGISTRATIONS.map((r) => ({ ...r })),
@@ -288,7 +289,7 @@ function sanitizeConfig(input, current) {
 function publicPayload(state) {
   return {
     config: state.config,
-    hasRoster: state.members.length > 0,
+    hasRoster: state.mode === 'roster',
     serverTime: new Date().toISOString()
   };
 }
@@ -382,6 +383,7 @@ function importMembers(state, csvText, mapping, replace) {
     }
     state.members = merged;
   }
+  state.mode = 'roster';
 
   return {
     added,
@@ -431,6 +433,9 @@ async function initState() {
   }
   if (typeof state.config.startAt !== 'string') {
     state.config.startAt = '';
+  }
+  if (typeof state.mode !== 'string') {
+    state.mode = state.members.length > 0 ? 'roster' : 'manual';
   }
   state.members = Array.isArray(state.members) ? state.members : [];
   state.registrations = Array.isArray(state.registrations) ? state.registrations : [];
@@ -508,7 +513,7 @@ async function handleRegister(req, res, body) {
     const members = state.members;
     let member = null;
 
-    if (state.members.length > 0) {
+    if (state.mode === 'roster') {
       const nameMatches = members.filter(
         (m) => m.name && normalizeKey(m.name) === normalizeKey(name)
       );
@@ -648,11 +653,13 @@ async function handleApi(req, res, url) {
         current.config = defaultConfig();
         current.members = [];
         current.registrations = [];
+        current.mode = 'manual';
       } else {
         const fresh = defaultState();
         current.config = fresh.config;
         current.members = fresh.members;
         current.registrations = fresh.registrations;
+        current.mode = 'roster';
       }
       return { ok: true };
     });
